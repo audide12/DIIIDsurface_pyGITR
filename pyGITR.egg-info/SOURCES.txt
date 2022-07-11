@@ -1,0 +1,16 @@
+README.md
+setup.py
+pyGITR/Geom.py
+pyGITR/Input.py
+pyGITR/Particles.py
+pyGITR/Physical_Sputtering.py
+pyGITR/PostProcess.py
+pyGITR/Run.py
+pyGITR/__init__.py
+pyGITR/gmsh_helper.py
+pyGITR/math_helper.py
+pyGITR.egg-info/PKG-INFO
+pyGITR.egg-info/SOURCES.txt
+pyGITR.egg-info/dependency_links.txt
+pyGITR.egg-info/requires.txt
+pyGITR.egg-info/top_level.txt
