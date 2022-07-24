@@ -94,7 +94,7 @@ Input.Input['flags'] = {
                     'USESURFACEMODEL':0,
                     'USE_SURFACE_POTENTIAL':0,
                     'USE_SHEATHEFIELD':1,
-                    'BIASED_SURFACE':3,
+                    'BIASED_SURFACE':0,
                     'USEPRESHEATHEFIELD':0,
                     'BFIELD_INTERP':0,
                     'LC_INTERP':0,
@@ -107,7 +107,7 @@ Input.Input['flags'] = {
                     'GRADT_INTERP':0,
                     'ODEINT':0,
                     'FIXED_SEEDS':1,
-                    'PARTICLESEEDS':0,
+                    'PARTICLESEEDS':1,
                     'GEOM_TRACE':0,
                     'GEOM_HASH':0,
                     'GEOM_HASH_SHEATH':0,
@@ -116,41 +116,42 @@ Input.Input['flags'] = {
                     'PARTICLE_SOURCE_ENERGY':0,
                     'PARTICLE_SOURCE_ANGLE':0,
                     'PARTICLE_SOURCE_FILE':1,
-                    'SPECTROSCOPY':0,
+                    'SPECTROSCOPY':3,
                     'USE3DTETGEOM':1,
                     'USECYLSYMM':0,
                     'USEFIELDALIGNEDVALUES':0,
                     'FLUX_EA':1,
                     'FORCE_EVAL':0,
                     'USE_SORT':0,
-                    'CHECK_COMPATIBILITY':1
+                    'CHECK_COMPATIBILITY':1,
+                    'USE_ADAPTIVE_DT':0
                     }
 
 Input.WriteInputFile(Folder='input', OverWrite=True)
 #%%
-# Run = pyGITR.Run()
-# Run.Verbose = True
+Run = pyGITR.Run()
+Run.Verbose = True
 
-# Run.SetReferenceDirectory('.')
-# Run.SetSimRootPath('~/simulations/{}_{}_{}__{}_single_microtrench/'.format(Elem,charge, Ti,nP))
-# Run.AddParamScan('input/gitrGeom.cfg',{'geom.lambda':[0.003]})
-# #Run.AddParamScan('input/gitrGeom.cfg',{'geom.lambda':[ 0.0001, 0.005]})
-# #Run.AddParamScan('input/gitrInput.cfg',{'backgroundPlasmaProfiles.biasPotential':[-3*Ti, 0]})
-# Run.ModifParam('input/gitrInput.cfg','impurityParticleSource.nP',nP)
+Run.SetReferenceDirectory('.')
+Run.SetSimRootPath('~/simulations/{}_{}_{}__{}_single_microtrench/'.format(Elem,charge, Ti,nP))
+Run.AddParamScan('input/gitrGeom.cfg',{'geom.lambda':[0.003]})
+#Run.AddParamScan('input/gitrGeom.cfg',{'geom.lambda':[ 0.0001, 0.005]})
+#Run.AddParamScan('input/gitrInput.cfg',{'backgroundPlasmaProfiles.biasPotential':[-3*Ti, 0]})
+Run.ModifParam('input/gitrInput.cfg','impurityParticleSource.nP',nP)
 
-# Run.SetupScan(OverWrite=True)
+Run.SetupScan(OverWrite=True)
 
 
-# Run.Clean()
-# Run.LaunchBatch()
+Run.Clean()
+Run.LaunchBatch()
 
 #%%
-# from pyGITR.PostProcess import *
-# Post = PostProcess(Run.CurrentSimu)
-# Post.PlotArray(PlotEStartEnd ,alpha=0.2)
-# Post.PlotArray(SurfaceAngle)
-# plt.figure()
-# plt.scatter(Post.Simulations[0].Data['ParticleStartData']['Data']['x'],Post.Simulations[0].Data['ParticleStartData']['Data']['y'],Post.Simulations[0].Data['ParticleStartData']['Data']['z'])
-# plt.scatter(Post.Simulations[0].Data['ParticleEndData']['Data']['x'],Post.Simulations[0].Data['ParticleEndData']['Data']['y'],Post.Simulations[0].Data['ParticleEndData']['Data']['z'])
+from pyGITR.PostProcess import *
+Post = PostProcess(Run.CurrentSimu)
+Post.PlotArray(PlotEStartEnd ,alpha=0.2)
+Post.PlotArray(SurfaceAngle)
+plt.figure()
+plt.scatter(Post.Simulations[0].Data['ParticleStartData']['Data']['x'],Post.Simulations[0].Data['ParticleStartData']['Data']['y'],Post.Simulations[0].Data['ParticleStartData']['Data']['z'])
+plt.scatter(Post.Simulations[0].Data['ParticleEndData']['Data']['x'],Post.Simulations[0].Data['ParticleEndData']['Data']['y'],Post.Simulations[0].Data['ParticleEndData']['Data']['z'])
 
-# print('Tot:',[S.Data['SurfaceData']['Data']['Tot'] for S in Post.Simulations])
+print('Tot:',[S.Data['SurfaceData']['Data']['Tot'] for S in Post.Simulations])

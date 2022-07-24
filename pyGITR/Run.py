@@ -16,7 +16,7 @@ from SimManager import SimulationManager, MakeSimFolder, MakeParameterArray, Mak
 
 class Run(SimulationManager):
     def __init__(self):
-        self.GITRExecPath = os.path.expanduser('~/GITR/build/GITR')
+        self.GITRExecPath = os.path.expanduser('~/Research/GITR/build/GITR')
         self.ParamScan = {}
         self.ParamModif = {}
         self.ReferenceDirectory = None

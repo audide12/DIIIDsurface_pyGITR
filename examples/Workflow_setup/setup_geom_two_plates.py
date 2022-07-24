@@ -31,6 +31,12 @@ g.SetElemAttr([], 'Z', 0)
 # Set potential for biasing
 g.SetElemAttr([],'potential',0)
 
+
+
+g.SetAttr('periodic_bc_x',1)
+g.SetAttr('periodic_bc_y',1)
+g.SetAttr('periodic_bc_z',1)
+
 # Plot geometry showing values of Z with color
 g.Plot(ElemAttr='Z', Alpha=0.1)
 

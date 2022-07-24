@@ -25,10 +25,10 @@ finally:
     gmsh.initialize()
 
 # Define DiMES cap surface
-height = 5.0
-width = 5.0
+height = 3.0
+width = 3.0
 z_down = 0.0
-z_up = 5.0
+z_up = 2.0
 x_center = 0.0
 y_center = 0.0
 tag_down = 1
