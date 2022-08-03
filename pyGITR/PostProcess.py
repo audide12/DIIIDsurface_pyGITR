@@ -1,4 +1,4 @@
-#import electronvolt_num as units
+import electronvolt_num as units
 import numpy as np
 from matplotlib import pyplot as plt
 from netCDF4 import Dataset
@@ -7,7 +7,7 @@ FileNameSurface='/home/jguterl/Dropbox/python/pyGITR/examples/large_box4/output/
 FileNameParticle='/home/jguterl/Dropbox/python/pyGITR/examples/large_box4/output/particleSource.nc'
 import netCDF4
 import os
-#from SimManager import rget
+from SimManager import rget
 
 class PostProcess():
     def __init__(self, Simulations = None, **kwargs):

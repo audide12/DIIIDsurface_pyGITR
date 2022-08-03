@@ -247,7 +247,7 @@ class ParticleDistribution():
 
     def WriteParticleFile(self,FileName, Format='f8', Folder='input'):
         self.CheckParticles()
-        #File = netCDF4.Dataset(os.path.join(Folder,FileName), 'w', format='NETCDF4')
+        File = netCDF4.Dataset(os.path.join(Folder,FileName), 'w', format='NETCDF4')
 
         np = File.createDimension('nP', self.Particles['Np'])
         Var = {}

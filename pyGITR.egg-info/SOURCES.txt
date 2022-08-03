@@ -9,6 +9,8 @@ pyGITR/Run.py
 pyGITR/__init__.py
 pyGITR/gmsh_helper.py
 pyGITR/math_helper.py
+pyGITR/postprocess_surfacemodel.py
+pyGITR/untitled2.py
 pyGITR.egg-info/PKG-INFO
 pyGITR.egg-info/SOURCES.txt
 pyGITR.egg-info/dependency_links.txt

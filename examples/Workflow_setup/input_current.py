@@ -80,8 +80,8 @@ Input.SetSurfaces()
 Input.SetDiagnostics()
 Input.Input['flags'] = {
                     'USE_CUDA':0,
-                    'USE_MPI':1,
-                    'USE_OPENMP':1,
+                    'USE_MPI':0,
+                    'USE_OPENMP':0,
                     'USE_IONIZATION':1,
                     'USE_RECOMBINATION':1,
                     'USEPERPDIFFUSION':0,
