@@ -307,6 +307,22 @@ class GeomSetup(GeomInput, GeomPlot):
         self.GetGroups()
         self.ImportMeshElements(mesh)
         self.LoadElemsAttr()
+        
+    def ShowInDir(self, GroupID=None, ax=None, L=0.002, Color='g'):
+        if ax is None:
+            ax = self.ax
+        if ax is None:
+            ax = plt.gca()
+        c = self.Centroid
+        v = self.normalVec
+        n = self.GeomInput['inDir']
+
+        Idx = self.GetGroupIdx(GroupID)
+        if self.Verbose:
+            print('Normals Idx:', Idx)
+        ax.quiver(c[Idx, 0], c[Idx, 1], c[Idx, 2], v[Idx, 0]*n[Idx], v[Idx, 1]*n[Idx], v[Idx, 2]*n[Idx], length=5*L, normalize=True, color=Color)
+        plt.show()
+        # ax.add_collection(lc)    
 
     def ImportMeshElements(self, mesh) -> None:
 
