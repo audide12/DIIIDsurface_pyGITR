@@ -66,30 +66,30 @@ class Physical_Sputtering_Reflection_Plots():
        
        
        
-       
+plt.figure()       
        
        
 
 Energies = np.linspace(0.1,1e5,10000)
-Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields('C', 'C')
+Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields('H', 'C')
 
 
-plt.loglog(Energies,Sputtering.real,'ro')
-plt.xlim(0.1,1e5)
-plt.ylim(1e-5,1)
-
-plt.xlabel('E_incident(eV)')
-plt.ylabel('Sputering Yield (Y)')
-plt.title(r'$C \rightarrow C$')
-
-
-# Reflection = Physical_Sputtering_Reflection_Plots.Reflection_yields('C', 'C')
-
-
-# plt.loglog(Energies,Reflection.real,'ro')
-# plt.xlim(20,1e5)
-# #plt.ylim(1e-2,15)
+# plt.loglog(Energies,Sputtering.real,'ro')
+# plt.xlim(0.1,1e5)
+# plt.ylim(1e-5,1)
 
 # plt.xlabel('E_incident(eV)')
-# plt.ylabel('Reflection Coefficients (Y)')
-# plt.title(r'$C \rightarrow C$')
+# plt.ylabel('Sputering Yield (Y)')
+# plt.title(r'$H \rightarrow C$')
+
+
+Reflection = Physical_Sputtering_Reflection_Plots.Reflection_yields('C', 'W')
+
+
+plt.loglog(Energies,Reflection.real,'ro')
+plt.xlim(20,1e5)
+#plt.ylim(1e-2,15)
+
+plt.xlabel('E_incident(eV)')
+plt.ylabel('Reflection Coefficients (Y)')
+plt.title(r'$C \rightarrow W$')

@@ -13,19 +13,23 @@ import numpy as np
 #from single_microtrench  import Lxbc,Lybc
 ParticleFile='particleConf.nc'
 GeometryFile='gitrGeom.cfg'
-B0 = 2.25
-thetaB = 2
+#B0 = 2.25
+B0 = 0.001
+
+thetaB = 0#2
 phiB = 0
 AxisrotB = [0,1,0]
-nP=10000
+nP=100
 mi=2.0
-Elem='D'
+Elem='C'
 
 MassElem ={'C' : 12, 'D' : 2}
 Mimp = MassElem.get(Elem)
 charge = 1
 Zmax = 6
-V= -60
+#V= -60
+V= -1
+
 #Plasma parameter
 Te = 25
 Ti = Te
@@ -47,32 +51,43 @@ p.SetAttr('Np', nP+1)
 # Set positions of particles
 p.SetAttr('x','Uniform') #set values of y and z with uniformly distributed values between -0.05 and 0.05
 p.SetAttr('y','Uniform')
-p.SetAttr('z',0.01) # set all values of x to -0.01
-p.SetAttr(['x','y'],0) #set values of y and z with uniformly distributed values between -0.05 and 0.05
+p.SetAttr('z',0.5) # set all values of x to -0.01
+p.SetAttr(['x','y'],0.5) #set values of y and z with uniformly distributed values between -0.05 and 0.05
 
 # Set velocities of particles
-p.SetAttr(['vx'],'Gaussian',sigma=1, beta=0.5)
-p.SetAttr(['vy','vz'],'Gaussian',sigma=1)
-p.Particles['vx'].mean()
+#p.SetAttr(['vx'],'Gaussian',sigma=1, beta=0.5)
+#p.SetAttr(['vy','vz'],'Gaussian',sigma=1)
+p.SetAttr(['vz'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
+p.SetAttr(['vy','vx'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
+
+#p.Particles['vx'].mean()
 
 # Rescale velocity by characteristic velocity
-vpara = vimp
-vperp = vimp
-p.ScaleAttr(['vy','vz'],vperp)
-p.ScaleAttr('vx',vpara)
-p.Rotate('v', AxisrotB, thetaB) #rotate (vx,vy,vz) along AxisrotB of angle thetaB
+#vpara = vimp
+#vperp = vimp
+vpara = 100
+vperp = 0.0
+
+p.ScaleAttr(['vy','vx'],vperp)
+
+p.ScaleAttr('vz',vpara)
+
+#p.Rotate('v', AxisrotB, thetaB) #rotate (vx,vy,vz) along AxisrotB of angle thetaB
 vx = p.Particles['vx']
 vy = p.Particles['vy']
 vz = p.Particles['vz']
 E= 1/2*Mimp*(vx**2+vy**2+vz**2)*mp/eV
-#%%
+
 # Write particle distribution in netcdf file
 p.WriteParticleFile(ParticleFile)
+
 #%%
 
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)
-Input.SetTimeStep(dt=1e-10, nT=1000)
+#Input.SetTimeStep(dt=1e-10, nT=1000)
+Input.SetTimeStep(dt=1e-6, nT=1000)
+
 Input.SetGeometryFile(GeometryFile)
 Input.SetParticleSource(ParticleFile, nP=nP, Zmax=Zmax, M=Mimp, Z=charge)
 Input.SetBackgroundPlasmaProfiles(Voltage=V)

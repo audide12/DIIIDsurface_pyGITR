@@ -59,3 +59,47 @@ ax[2].hist(vx)
 ax[2].hist(vy,alpha=0.2)
 ax[2].hist(vz,alpha=0.2)
 ax[3].plot(np.arange(0,S.shape[0]),S)
+
+#%%
+# History plotting
+
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output/history.nc'
+HistoryData = Dataset(FileNameHistory, "r", format="NETCDF4")
+x = np.array(HistoryData.variables['x'])
+z = np.array(HistoryData.variables['z'])
+y = np.array(HistoryData.variables['y'])
+
+nT = HistoryData.dimensions['nT'].size
+nP = HistoryData.dimensions['nP'].size
+from mpl_toolkits.mplot3d import Axes3D
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+for i in range(0,nP):
+    ax.plot(x[i,:],y[i,:],z[i,:])
+g.Plot(ElemAttr='Z', Alpha=0.1, fig=fig, ax=ax)    
+
+#%% 
+# Setting up the initial C_C in surface_evolution_C.nc
+
+C_C = np.full((len(x1),1),0.4)
+
+Surface_time = np.full((1,1),0.0)
+
+Surface_number = np.array(range(len(x1)))
+
+ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C.nc', 'w', format='NETCDF4')
+s_number_dim = ncFile.createDimension('surface_dim', len(x1)) # surface number dimension
+s_time_dim = ncFile.createDimension('time_dim', len(Surface_time)) # time dimension
+
+s_number = ncFile.createVariable('surface_number', np.float32, ('surface_dim',))
+s_time = ncFile.createVariable('time', np.float32, ('time_dim',))
+s_concentration = ncFile.createVariable('surface_concentration',np.float64,('surface_dim','time_dim'))
+
+
+s_number[:] = np.linspace(1,len(x1),len(x1))
+s_time[:] = Surface_time
+s_concentration[:,:] = C_C
+
+ncFile.close()
+
+

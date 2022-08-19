@@ -28,22 +28,22 @@ Created on Tue Aug  2 10:31:27 2022
 
 
 
-Surface_time = [2,3]
-C_C = np.ones((len(x1),len(Surface_time)))
+# Surface_time = [2,3]
+# C_C = np.ones((len(x1),len(Surface_time)))
 
-ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C.nc', 'w', format='NETCDF4')
-s_number_dim = ncFile.createDimension('surface_dim', len(x1)) # surface number dimension
-s_time_dim = ncFile.createDimension('time_dim', len(Surface_time)) # time dimension
+# ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C.nc', 'w', format='NETCDF4')
+# s_number_dim = ncFile.createDimension('surface_dim', len(x1)) # surface number dimension
+# s_time_dim = ncFile.createDimension('time_dim', len(Surface_time)) # time dimension
 
-s_number = ncFile.createVariable('surface_number', np.float32, ('surface_dim',))
-s_time = ncFile.createVariable('time', np.float32, ('time_dim',))
-s_concentration = ncFile.createVariable('surface_concentration',np.float64,('surface_dim','time_dim'))
+# s_number = ncFile.createVariable('surface_number', np.float32, ('surface_dim',))
+# s_time = ncFile.createVariable('time', np.float32, ('time_dim',))
+# s_concentration = ncFile.createVariable('surface_concentration',np.float64,('surface_dim','time_dim'))
 
-s_number[:] = np.linspace(1,len(x1),len(x1))
-s_time[:] = Surface_time
-s_concentration[:,:] = C_C
+# s_number[:] = np.linspace(1,len(x1),len(x1))
+# s_time[:] = Surface_time
+# s_concentration[:,:] = C_C
 
-ncFile.close()
+# ncFile.close()
 
 
 
@@ -57,15 +57,15 @@ ncFile.close()
 # surface_number = SurfaceData['surface_number'][:]
 # counter = len(surface_time)
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output/positions.nc'
-PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
+# FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output/positions.nc'
+# PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
 
-surfacehit = np.array[PositionData['surfaceHit']]
-count = 0
-for i in surfacehit:
-    if i == 2:
-        count+=1
-print(count)
+# surfacehit = np.array[PositionData['surfaceHit']]
+# count = 0
+# for i in surfacehit:
+#     if i == 2:
+#         count+=1
+# print(count)
 
 
 
@@ -77,3 +77,26 @@ print(count)
 # E=np.sum(Edist[:,:,:],(0,2))
 # A=np.sum(Edist[:,:,:],(0,1))
 # S=np.sum(Edist[:,:,:],(1,2))  # 
+
+#%%
+C_C = np.full((len(x1),1),0.4)
+
+Surface_time = np.full((1,1),0.0)
+
+Surface_number = np.array(range(len(x1)))
+
+ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C.nc', 'w', format='NETCDF4')
+s_number_dim = ncFile.createDimension('surface_dim', len(x1)) # surface number dimension
+s_time_dim = ncFile.createDimension('time_dim', len(Surface_time)) # time dimension
+
+s_number = ncFile.createVariable('surface_number', np.float32, ('surface_dim',))
+s_time = ncFile.createVariable('time', np.float32, ('time_dim',))
+s_concentration = ncFile.createVariable('surface_concentration',np.float64,('surface_dim','time_dim'))
+
+
+s_number[:] = np.linspace(1,len(x1),len(x1))
+s_time[:] = Surface_time
+s_concentration[:,:] = C_C
+
+ncFile.close()
+
