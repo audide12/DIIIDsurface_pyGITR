@@ -21,7 +21,7 @@ import math
 Flux_H = 1.43222e+19 # Obtained from SOLPS simulation (Zack)
 beta_C = 0  # zero redeposition
 Delta_t = 0.1 # in seconds
-Delta_t_gitr = 1e-7
+Delta_t_gitr = 1e-5
 Delta_implant = 1e-3 # enter parameter value and units
 amu = 12 #for carbon
 n_atom = 1e24 # average number density
@@ -84,6 +84,8 @@ a = np.array(config.geom.a)
 b = np.array(config.geom.b)
 c = np.array(config.geom.c)
 d = np.array(config.geom.d)
+
+in_direction = np.array(config.geom.inDir)
 plane_norm = np.array(config.geom.plane_norm)
 
 #%%
@@ -146,16 +148,10 @@ for i in range(len(Energy_particles)):
         Flux_C = weight_gitr/(Delta_t_gitr*area[surface_index])  # check this
         #Gamma_W_ero = sr_object.Calculate_PhysicalSputteringParameters('H','W',Energy_H)*C_W[time]*Gamma_H_incident + sr_object.Calculate_PhysicalSputteringParameters('C','W',Energy_C)*C_W[time]*Gamma_C_incident 
         Gamma_C_ero = sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_particles[i])*C_C[surface_index,-1]*Flux_C
-        #print(Flux_C)
-        #print(sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_particles[i]))
-        
-        
+                
         Gamma_C_dep = (1- sr_object.Calculate_ReflectionCoefficients('C','C',Energy_particles[i]))*C_C[surface_index,-1]*Flux_C
-        
-        
-        Gamma_C_reflected = (sr_object.Calculate_ReflectionCoefficients('C','C',Energy_particles[i]))*C_C[surface_index,-1]*Flux_C
-        print(sr_object.Calculate_ReflectionCoefficients('C','C',Energy_particles[i]))
-        
+                
+        Gamma_C_reflected = (sr_object.Calculate_ReflectionCoefficients('C','C',Energy_particles[i]))*C_C[surface_index,-1]*Flux_C        
         
         Gamma_C_redep = beta_C*Gamma_C_ero
         Gamma_C_dep = Gamma_C_dep + Gamma_C_redep
@@ -201,6 +197,7 @@ for surface_index in range(len(x1)):
     
     Gamma_W_net = 0 # for the present case
     
+    print("---------")
     if (Gamma_C_net_global[surface_index] + Gamma_W_net) > 0: #deposition regime
         print("Deposition")
         Gamma_C_bulk_global[surface_index] = (Gamma_C_net_global[surface_index] + Gamma_W_net)        
@@ -223,6 +220,11 @@ for surface_index in range(len(x1)):
     
     if no_of_C > 0:
         
+        
+        print("No of C: ",no_of_C)
+        print("Surface: ",surface_index)
+        
+        
         p_C = ParticleDistribution()
         p_C.SetAttr('Np', no_of_C)
         
@@ -241,9 +243,9 @@ for surface_index in range(len(x1)):
         # else:
         #     p_C.SetAttr('z',np.full((no_of_C,1),z1[surface_index]))
         
-        centroid_x = (x1[surface_index] + x2[surface_index] +x3[surface_index])/2
-        centroid_y = (y1[surface_index] + y2[surface_index] +y3[surface_index])/2
-        centroid_z = (z1[surface_index] + z2[surface_index] +z3[surface_index])/2
+        centroid_x = (x1[surface_index] + x2[surface_index] +x3[surface_index])/3
+        centroid_y = (y1[surface_index] + y2[surface_index] +y3[surface_index])/3
+        centroid_z = (z1[surface_index] + z2[surface_index] +z3[surface_index])/3
         
         p_C.SetAttr('x',np.full((no_of_C,1),centroid_x))
         p_C.SetAttr('y',np.full((no_of_C,1),centroid_y))

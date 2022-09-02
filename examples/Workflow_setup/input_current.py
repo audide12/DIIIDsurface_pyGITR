@@ -14,7 +14,7 @@ import numpy as np
 ParticleFile='particleConf.nc'
 GeometryFile='gitrGeom.cfg'
 #B0 = 2.25
-B0 = 0.001
+B0 = -0.0002
 
 thetaB = 0#2
 phiB = 0
@@ -25,7 +25,7 @@ Elem='C'
 
 MassElem ={'C' : 12, 'D' : 2}
 Mimp = MassElem.get(Elem)
-charge = 1
+charge = 20
 Zmax = 6
 #V= -60
 V= -1
@@ -86,7 +86,7 @@ p.WriteParticleFile(ParticleFile)
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)
 #Input.SetTimeStep(dt=1e-10, nT=1000)
-Input.SetTimeStep(dt=1e-6, nT=1000)
+Input.SetTimeStep(dt=1e-7, nT=1000)
 
 Input.SetGeometryFile(GeometryFile)
 Input.SetParticleSource(ParticleFile, nP=nP, Zmax=Zmax, M=Mimp, Z=charge)
