@@ -70,6 +70,8 @@ for i in surfacehit_C:
         count_C+=1
 print(count_C)
 
+#weight_flux_C = token_flux/count_C # this is the delta Gamma in the pdf
+
 #print(surface_vx)
 
 #Angle_particles = add this functionality
@@ -97,6 +99,8 @@ for i in surfacehit_W:
     if i != -1:
         count_W+=1
 print(count_W)
+
+#weight_flux_W = token_flux/count_W
 
 #print(surface_vx)
 
@@ -137,11 +141,21 @@ plane_norm = np.array(config.geom.plane_norm)
 
 #%%
 
-# This section is to initialize the C_C file
+# This section is to initialize the surface_evolution netcdf file
 
 C_C = np.full((len(x1),1),0.0)
 C_W = np.full((len(x1),1),1.0)
 
+
+N_GITR = 10000 # number of GITR particles
+initial_token_flux = 1.0e19  # tunable parameter
+Flux_proportionality_C = 0
+Flux_proportionality_W = 0
+
+for k in range(len(x1)):
+    Flux_proportionality_C[k] = Flux_proportionality_C + initial_token_flux*area[k]*Delta_t_gitr/N_GITR
+    Flux_proportionality_W[k] = Flux_proportionality_W + initial_token_flux*area[k]*Delta_t_gitr/N_GITR
+    
 
 Surface_time = np.full((1,1),0.0)
 
@@ -155,20 +169,23 @@ s_number = ncFile.createVariable('surface_number', np.float32, ('surface_dim',))
 s_time = ncFile.createVariable('time', np.float32, ('time_dim',))
 s_concentration_C = ncFile.createVariable('surface_concentration_C',np.float64,('surface_dim','time_dim'))
 s_concentration_W = ncFile.createVariable('surface_concentration_W',np.float64,('surface_dim','time_dim'))
+flux_proportionality_C = ncFile.createVariable('Flux_Conversion_C',np.float64,('time_dim'))
+flux_proportionality_W = ncFile.createVariable('Flux_Conversion_W',np.float64,('time_dim'))
 
 
 s_number[:] = np.linspace(1,len(x1),len(x1))
 s_time[:] = Surface_time
 s_concentration_C[:,:] = C_C
 s_concentration_W[:,:] = C_W
-
+flux_proportionality_C[:] = Flux_proportionality_C
+flux_proportionality_W[:] = Flux_proportionality_W
 
 ncFile.close()
 
 
 #%%
 
-#Reading the surface features
+#Reading the surface features from the surface evolution netcdf file
 
 FileNameSurfaceConcentration='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C_W.nc'
 
@@ -177,19 +194,13 @@ SurfaceConcentrationData = Dataset(FileNameSurfaceConcentration, "r", format="NE
 
 C_C = SurfaceConcentrationData['surface_concentration_C'][:,:]
 C_W = SurfaceConcentrationData['surface_concentration_W'][:,:]
+Flux_proportionality_C = SurfaceConcentrationData['Flux_Conversion_C'][:]
+Flux_proportionality_W = SurfaceConcentrationData['Flux_Conversion_W'][:]
 
 Surface_time = SurfaceConcentrationData['time'][:]
 Surface_number = SurfaceConcentrationData['surface_number'][:]
+
 counter = len(Surface_time)
-
-
-# for looping over all the surface elements and tracking concentrations and carbon erosion
-
-Gamma_C_ero_global = np.zeros(len(x1))
-
-Gamma_C_dep_global = np.zeros(len(x1))
-
-
 
 #%%
 # Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITRb particle
@@ -206,7 +217,7 @@ for i in range(len(Energy_particles_C)):
         surface_index = int(surfacehit_C[i])
         sr_object = Sputtering_and_reflection()
         
-        Flux_C_local = weight_gitr/(Delta_t_gitr*area[surface_index])
+        Flux_C_local = Flux_proportionality_C[-1]/(Delta_t_gitr*area[surface_index])
         
         Gamma_C_redep[surface_index] = Gamma_C_redep[surface_index] + Flux_C_local  # check this
         Y_CW_Gamma_C_redep[surface_index] = Y_CW_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','W',Energy_particles_C[i])*Flux_C_local
@@ -221,7 +232,7 @@ for i in range(len(Energy_particles_W)):
         surface_index = int(surfacehit_W[i])
         sr_object = Sputtering_and_reflection()
         
-        Flux_W_local = weight_gitr/(Delta_t_gitr*area[surface_index])
+        Flux_W_local = Flux_proportionality_W[-1]/(Delta_t_gitr*area[surface_index])
         
         Gamma_W_redep[surface_index] = Gamma_W_redep[surface_index] + Flux_W_local  # check this
         Y_WW_Gamma_W_redep[surface_index] = Y_WW_Gamma_W_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','W',Energy_particles_W[i])*Flux_W_local
@@ -264,11 +275,22 @@ z_W_array = np.zeros(0)
 nP_C_global = 0 #tracks total number of eroded particles
 nP_W_global = 0 #tracks total number of eroded particles
 
+prop_W = 0
+prop_C = 0
+
+for k in range(len(x1)):
+    prop_W = prop_W + Gamma_W_ero[k]*area[k]*Delta_t_gitr
+    prop_C = prop_C + Gamma_C_ero[k]*area[k]*Delta_t_gitr
+
+prop_W = prop_W/N_GITR
+prop_C = prop_C/N_GITR
+
+    
 for surface_index in range(len(x1)):
     
     #no_of_C = int(math.ceil(Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/weight_gitr))
-    no_of_C = int(math.floor(Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/weight_gitr))
-    no_of_C_frac = (Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/weight_gitr)%no_of_C
+    no_of_C = int(math.floor(Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_C))
+    no_of_C_frac = (Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_C)%no_of_C
     
     if (np.random.uniform(low = 0.0, high = 1.0) < no_of_C_frac):
         no_of_C += 1
@@ -314,8 +336,8 @@ for surface_index in range(len(x1)):
         z_C_array = np.append(z_C_array,p_C.Particles['z'])
         
         
-    no_of_W = int(math.floor(Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/weight_gitr))
-    no_of_W_frac = (Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/weight_gitr)%no_of_W
+    no_of_W = int(math.floor(Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_W))
+    no_of_W_frac = (Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_W)%no_of_W
     
     if (np.random.uniform(low = 0.0, high = 1.0) < no_of_W_frac):
         no_of_W += 1
@@ -460,6 +482,9 @@ for t in range(1,int(Time_steps)):
 C_C = np.concatenate((C_C,new_entry_C),axis=1)
 C_W = np.concatenate((C_W,new_entry_W),axis=1)
 
+Flux_proportionality_C = np.concatenate((Flux_proportionality_C,(1/prop_C)))
+Flux_proportionality_W = np.concatenate((Flux_proportionality_W,(1/prop_W)))
+
 Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t)
 
 #Writing the surface features with time
@@ -472,12 +497,16 @@ s_number = ncFile.createVariable('surface_number', np.float32, ('surface_dim',))
 s_time = ncFile.createVariable('time', np.float32, ('time_dim',))
 s_concentration_C = ncFile.createVariable('surface_concentration_C',np.float64,('surface_dim','time_dim'))
 s_concentration_W = ncFile.createVariable('surface_concentration_W',np.float64,('surface_dim','time_dim'))
+flux_proportionality_C = ncFile.createVariable('Flux_Conversion_C',np.float64,('time_dim'))
+flux_proportionality_W = ncFile.createVariable('Flux_Conversion_W',np.float64,('time_dim'))
 
 
 s_number[:] = np.linspace(1,len(x1),len(x1))
 s_time[:] = Surface_time
 s_concentration_C[:,:] = C_C
 s_concentration_W[:,:] = C_W
+flux_proportionality_C[:] = Flux_proportionality_C
+flux_proportionality_W[:] = Flux_proportionality_W
 
 ncFile.close()
 
