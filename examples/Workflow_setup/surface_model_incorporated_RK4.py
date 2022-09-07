@@ -153,8 +153,8 @@ Flux_proportionality_C = 0
 Flux_proportionality_W = 0
 
 for k in range(len(x1)):
-    Flux_proportionality_C[k] = Flux_proportionality_C + initial_token_flux*area[k]*Delta_t_gitr/N_GITR
-    Flux_proportionality_W[k] = Flux_proportionality_W + initial_token_flux*area[k]*Delta_t_gitr/N_GITR
+    Flux_proportionality_C = Flux_proportionality_C + initial_token_flux*area[k]*Delta_t_gitr/N_GITR
+    Flux_proportionality_W = Flux_proportionality_W + initial_token_flux*area[k]*Delta_t_gitr/N_GITR
     
 
 Surface_time = np.full((1,1),0.0)
@@ -205,10 +205,10 @@ counter = len(Surface_time)
 #%%
 # Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITRb particle
 
-Gamma_C_redep = np.zeros(len(x1))
-Y_CW_Gamma_C_redep = np.zeros(len(x1))
-Y_CC_Gamma_C_redep = np.zeros(len(x1))
-Y_WC_Gamma_C_redep = np.zeros(len(x1))
+Gamma_C_redep = np.zeros((len(x1),1))
+Y_CW_Gamma_C_redep = np.zeros((len(x1),1))
+Y_CC_Gamma_C_redep = np.zeros((len(x1),1))
+Y_WC_Gamma_C_redep = np.zeros((len(x1),1))
 
 
 
@@ -224,8 +224,8 @@ for i in range(len(Energy_particles_C)):
         Y_CC_Gamma_C_redep[surface_index] = Y_CC_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_particles_C[i])*Flux_C_local
         Y_WC_Gamma_C_redep[surface_index] = Y_WC_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','C',Energy_particles_C[i])*Flux_C_local
 
-Gamma_W_redep = np.zeros(len(x1))
-Y_WW_Gamma_W_redep = np.zeros(len(x1))
+Gamma_W_redep = np.zeros((len(x1),1))
+Y_WW_Gamma_W_redep = np.zeros((len(x1),1))
         
 for i in range(len(Energy_particles_W)):
     if surfacehit_W[i] != -1:
@@ -242,14 +242,14 @@ for i in range(len(Energy_particles_W)):
 chi_W_ero =  Y_WW_Gamma_W_redep + Y_CW_Gamma_C_redep + Sputtering_yield_H_to_W*Flux_H + Sputtering_yield_C_to_W*Flux_C    
 
 chi_C_ero_1 =  Y_CC_Gamma_C_redep + Sputtering_yield_H_to_C*Flux_H + Sputtering_yield_C_to_C*Flux_C   
-chi_C_ero_1 =  Y_WC_Gamma_C_redep
+chi_C_ero_2 =  Y_WC_Gamma_C_redep
 
-chi_C_dep_1 = np.zeros(len(x1)) + (1-Reflection_yield_C_to_C)*Flux_C
-chi_C_dep_2 = np.zeros(len(x1)) + (1-Reflection_yield_C_to_W)*Flux_C
+chi_C_dep_1 = np.zeros((len(x1),1)) + (1-Reflection_yield_C_to_C)*Flux_C
+chi_C_dep_2 = np.zeros((len(x1),1)) + (1-Reflection_yield_C_to_W)*Flux_C
    
-Gamma_C_ero_global = C_C[:,-1] * chi_C_ero_1 + C_W[:,-1] * chi_C_ero_2
-Gamma_C_dep_global = C_C[:,-1] * chi_C_dep_1 + C_W[:,-1] * chi_C_dep_2 + Gamma_C_redep
-Gamma_W_ero_global = C_W[:,-1] * chi_W_ero
+Gamma_C_ero_global = np.reshape(C_C[:,-1],(len(x1),1)) * chi_C_ero_1 + np.reshape(C_W[:,-1],(len(x1),1)) * chi_C_ero_2
+Gamma_C_dep_global = np.reshape(C_C[:,-1],(len(x1),1)) * chi_C_dep_1 + np.reshape(C_W[:,-1],(len(x1),1)) * chi_C_dep_2 + Gamma_C_redep
+Gamma_W_ero_global = np.reshape(C_W[:,-1],(len(x1),1)) * chi_W_ero
 Gamma_W_dep_global = Gamma_W_redep
 
 #%%
@@ -279,8 +279,8 @@ prop_W = 0
 prop_C = 0
 
 for k in range(len(x1)):
-    prop_W = prop_W + Gamma_W_ero[k]*area[k]*Delta_t_gitr
-    prop_C = prop_C + Gamma_C_ero[k]*area[k]*Delta_t_gitr
+    prop_W = prop_W + Gamma_W_ero_global[k]*area[k]*Delta_t_gitr
+    prop_C = prop_C + Gamma_C_ero_global[k]*area[k]*Delta_t_gitr
 
 prop_W = prop_W/N_GITR
 prop_C = prop_C/N_GITR
@@ -297,7 +297,8 @@ for surface_index in range(len(x1)):
         
     #print(no_of_C)
 
-    nP_C_global = nP_global + no_of_C
+    nP_C_global = nP_C_global + no_of_C
+    
     
     if no_of_C > 0:
         
@@ -326,10 +327,15 @@ for surface_index in range(len(x1)):
         E_C = np.sqrt(2*E_C*units.eV/(amu_C*units.mp))   #check these
         #print(E_C)
         p_C.SetAttr('vz',E_C)
+        
+        if (surface_index>3):
+            sign = -1
+        else:
+            sign = 1
             
-        vx_C_array = np.append(vx_C_array,p_C.Particles['vx'])
-        vy_C_array = np.append(vy_C_array,p_C.Particles['vy'])
-        vz_C_array = np.append(vz_C_array,p_C.Particles['vz'])
+        vx_C_array = np.append(vx_C_array,sign*p_C.Particles['vx'])
+        vy_C_array = np.append(vy_C_array,sign*p_C.Particles['vy'])
+        vz_C_array = np.append(vz_C_array,sign*p_C.Particles['vz'])
         
         x_C_array = np.append(x_C_array,p_C.Particles['x'])
         y_C_array = np.append(y_C_array,p_C.Particles['y'])
@@ -368,25 +374,33 @@ for surface_index in range(len(x1)):
         p_W.SetAttr('vy',np.full((no_of_W,1),0.0))
         
         p_W.SetAttr('vz','Thomson')
-        E_W = p_C.Particles['vz'][:]
+        E_W = p_W.Particles['vz'][:]
         
         E_W = np.sqrt(2*E_W*units.eV/(amu_W*units.mp))   #check these
         #print(E_C)
         p_W.SetAttr('vz',E_W)
+                
+        if (surface_index>3):
+            sign = -1
+        else:
+            sign = 1
             
-        vx_W_array = np.append(vx_W_array,p_W.Particles['vx'])
-        vy_W_array = np.append(vy_W_array,p_W.Particles['vy'])
-        vz_W_array = np.append(vz_W_array,p_W.Particles['vz'])
+            
+            
+        vx_W_array = np.append(vx_W_array,sign*p_W.Particles['vx'])
+        vy_W_array = np.append(vy_W_array,sign*p_W.Particles['vy'])
+        vz_W_array = np.append(vz_W_array,sign*p_W.Particles['vz'])
         
         x_W_array = np.append(x_W_array,p_W.Particles['x'])
         y_W_array = np.append(y_W_array,p_W.Particles['y'])
         z_W_array = np.append(z_W_array,p_W.Particles['z'])
         
         
- 
-        
+
 # Writing the particle list for the next GITR run  
 p_C = ParticleDistribution()
+
+
 
 p_C.SetAttr('Np', nP_C_global)
 
@@ -432,10 +446,11 @@ p_W.WriteParticleFile('particleConf_W.nc')
 # Evolution of C_C and C_W
 
 Time = Delta_t
-Time_steps = 1e5
+Time_steps = 1e4
 Delta_Time = Delta_t/Time_steps
 
 new_entry_C = np.reshape(C_C[:,-1],(len(x1),1))
+
 new_entry_W = np.reshape(C_W[:,-1],(len(x1),1))
 #new_entry_C = np.zeros(len(x1))
 
@@ -458,17 +473,21 @@ for t in range(1,int(Time_steps)):
     
     Gamma_W_net = -Gamma_W_ero
     
+    Gamma_C_bulk = np.zeros((len(x1),1))
+    Gamma_W_bulk = np.zeros((len(x1),1))
+    
     #print(Gamma_C_net)
     
-    if (Gamma_C_net + Gamma_W_net) > 0: # deposition regime
-        #print("deposition")
-        Gamma_C_bulk = new_entry_C*(Gamma_C_net+Gamma_W_net)
-        Gamma_W_bulk = new_entry_W*(Gamma_C_net+Gamma_W_net)
+    for surface_index in range(len(x1)):
+        if (Gamma_C_net[surface_index] + Gamma_W_net[surface_index]) > 0: # deposition regime
+            #print("deposition")
+            Gamma_C_bulk[surface_index] = new_entry_C[surface_index,1]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+            Gamma_W_bulk[surface_index] = new_entry_W[surface_index,1]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
         
-    else:  #  erosion regime
-        #print("erosion")
-        Gamma_C_bulk = 0
-        Gamma_W_bulk = (Gamma_C_net+Gamma_W_net)
+        else:  #  erosion regime
+            #print("erosion")
+            Gamma_C_bulk[surface_index] = 0
+            Gamma_W_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
     
     #print(t)
     new_entry_C = new_entry_C + Delta_Time*(Gamma_C_net - Gamma_C_bulk)/(Delta_implant*n_atom)
@@ -482,8 +501,8 @@ for t in range(1,int(Time_steps)):
 C_C = np.concatenate((C_C,new_entry_C),axis=1)
 C_W = np.concatenate((C_W,new_entry_W),axis=1)
 
-Flux_proportionality_C = np.concatenate((Flux_proportionality_C,(1/prop_C)))
-Flux_proportionality_W = np.concatenate((Flux_proportionality_W,(1/prop_W)))
+Flux_proportionality_C = np.append(Flux_proportionality_C,(1/prop_C))
+Flux_proportionality_W = np.append(Flux_proportionality_W,(1/prop_W))
 
 Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t)
 
