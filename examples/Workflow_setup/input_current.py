@@ -11,10 +11,10 @@ Created on Thu Jul 14 14:21:44 2022
 import pyGITR
 import numpy as np
 #from single_microtrench  import Lxbc,Lybc
-ParticleFile='particleConf.nc'
+ParticleFile='particleConf_W.nc'
 GeometryFile='gitrGeom.cfg'
 #B0 = 2.25
-B0 = -0.0002
+B0 = -0.000 # -0.0002 for C and 0.00 for W
 
 thetaB = 0#2
 phiB = 0
@@ -82,6 +82,10 @@ E= 1/2*Mimp*(vx**2+vy**2+vz**2)*mp/eV
 p.WriteParticleFile(ParticleFile)
 
 #%%
+
+ParticleFile='particleConf_C.nc'
+B0 = -0.0002 # -0.0002 for C and 0.00 for W
+
 
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)

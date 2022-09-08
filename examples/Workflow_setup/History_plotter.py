@@ -101,5 +101,9 @@ s_time[:] = Surface_time
 s_concentration[:,:] = C_C
 
 ncFile.close()
+#%%
+
+FileNameParticle='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/particleConf_C.nc' 
+InputParticle = Dataset(FileNameParticle, "r", format="NETCDF4")
 
 

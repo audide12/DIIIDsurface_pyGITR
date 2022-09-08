@@ -50,7 +50,7 @@ Reflection_yield_C_to_W = 0.75  # max 0.95 min 0.67    steady-state :  0.005
 #%%
 # Reading position files of Carbon
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output/positions.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_C/positions.nc'
 PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
 
 surfacehit_C = np.array(PositionData['surfaceHit'])
@@ -80,7 +80,7 @@ print(count_C)
 
 # Reading position files of Tungsten
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output/positions.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_W/positions.nc'
 PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
 
 surfacehit_W = np.array(PositionData['surfaceHit'])
@@ -144,7 +144,14 @@ plane_norm = np.array(config.geom.plane_norm)
 # This section is to initialize the surface_evolution netcdf file
 
 C_C = np.full((len(x1),1),0.0)
-C_W = np.full((len(x1),1),1.0)
+C_W = np.full((len(x1),1),0.0)
+
+for k in range(len(x1)):
+    if k<4:
+        C_C[k] = 1.0
+    else:
+        C_W[k] = 1.0
+
 
 
 N_GITR = 10000 # number of GITR particles
@@ -334,8 +341,8 @@ for surface_index in range(len(x1)):
         else:
             sign = 1
             
-        vx_C_array = np.append(vx_C_array,sign*p_C.Particles['vx'])
-        vy_C_array = np.append(vy_C_array,sign*p_C.Particles['vy'])
+        vx_C_array = np.append(vx_C_array,p_C.Particles['vx'])
+        vy_C_array = np.append(vy_C_array,p_C.Particles['vy'])
         vz_C_array = np.append(vz_C_array,sign*p_C.Particles['vz'])
         
         x_C_array = np.append(x_C_array,p_C.Particles['x'])
@@ -389,8 +396,8 @@ for surface_index in range(len(x1)):
             
             
             
-        vx_W_array = np.append(vx_W_array,sign*p_W.Particles['vx'])
-        vy_W_array = np.append(vy_W_array,sign*p_W.Particles['vy'])
+        vx_W_array = np.append(vx_W_array,p_W.Particles['vx'])
+        vy_W_array = np.append(vy_W_array,p_W.Particles['vy'])
         vz_W_array = np.append(vz_W_array,sign*p_W.Particles['vz'])
         
         x_W_array = np.append(x_W_array,p_W.Particles['x'])
@@ -483,8 +490,8 @@ for t in range(1,int(Time_steps)):
     for surface_index in range(len(x1)):
         if (Gamma_C_net[surface_index] + Gamma_W_net[surface_index]) > 0: # deposition regime
             #print("deposition")
-            Gamma_C_bulk[surface_index] = new_entry_C[surface_index,1]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
-            Gamma_W_bulk[surface_index] = new_entry_W[surface_index,1]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+            Gamma_C_bulk[surface_index] = new_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+            Gamma_W_bulk[surface_index] = new_entry_W[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
         
         else:  #  erosion regime
             #print("erosion")
