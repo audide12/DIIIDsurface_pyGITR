@@ -288,12 +288,13 @@ prop_C = prop_C/N_GITR
     
 for surface_index in range(len(x1)):
     
-    #no_of_C = int(math.ceil(Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/weight_gitr))
-    no_of_C = int(math.floor(Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_C))
-    no_of_C_frac = (Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_C)%no_of_C
     
-    if (np.random.uniform(low = 0.0, high = 1.0) < no_of_C_frac):
-        no_of_C += 1
+    #no_of_C = int(math.floor(Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_C))
+    no_of_C = round(np.array(Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_C).item())
+    # no_of_C_frac = (Gamma_C_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_C)%no_of_C
+    
+    # if (np.random.uniform(low = 0.0, high = 1.0) < no_of_C_frac):
+    #     no_of_C += 1
         
     #print(no_of_C)
 
@@ -303,8 +304,8 @@ for surface_index in range(len(x1)):
     if no_of_C > 0:
         
         
-        print("No of C: ",no_of_C)
-        print("Surface: ",surface_index)
+        # print("No of C: ",no_of_C)
+        # print("Surface: ",surface_index)
         
         
         p_C = ParticleDistribution()
@@ -342,11 +343,12 @@ for surface_index in range(len(x1)):
         z_C_array = np.append(z_C_array,p_C.Particles['z'])
         
         
-    no_of_W = int(math.floor(Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_W))
-    no_of_W_frac = (Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_W)%no_of_W
+    #no_of_W = int(math.floor(Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_W))    
+    no_of_W = round(np.array(Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_W).item())
+    # no_of_W_frac = (Gamma_W_ero_global[surface_index]*Delta_t_gitr*area[surface_index]/prop_W)%no_of_W
     
-    if (np.random.uniform(low = 0.0, high = 1.0) < no_of_W_frac):
-        no_of_W += 1
+    # if (np.random.uniform(low = 0.0, high = 1.0) < no_of_W_frac):
+    #     no_of_W += 1
         
     #print(no_of_C)
 
@@ -355,8 +357,8 @@ for surface_index in range(len(x1)):
     if no_of_W > 0:
         
         
-        print("No of C: ",no_of_C)
-        print("Surface: ",surface_index)
+        # print("No of C: ",no_of_C)
+        # print("Surface: ",surface_index)
         
         
         p_W = ParticleDistribution()
