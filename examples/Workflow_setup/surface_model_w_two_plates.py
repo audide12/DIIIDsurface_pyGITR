@@ -65,10 +65,15 @@ Energy_particles_C = np.array(0.5*amu_C*1.66e-27*(surface_vx_C**2 + surface_vy_C
 
 
 count_C = 0
+count_C_6 = 0
+
 for i in surfacehit_C:
     if i != -1:
         count_C+=1
+    if i == 6:
+        count_C_6+=1
 print(count_C)
+print(count_C_6)
 
 #weight_flux_C = token_flux/count_C # this is the delta Gamma in the pdf
 
@@ -292,7 +297,7 @@ for k in range(len(x1)):
 prop_W = prop_W/N_GITR
 prop_C = prop_C/N_GITR
 
-    
+#%%    
 for surface_index in range(len(x1)):
     
     
@@ -336,14 +341,18 @@ for surface_index in range(len(x1)):
         #print(E_C)
         p_C.SetAttr('vz',E_C)
         
-        if (surface_index>3):
-            sign = -1
-        else:
+        if (surface_index<4):
             sign = 1
+        else:
+            sign = -1
+            
+        p_C.ScaleAttr('vz',sign)    
             
         vx_C_array = np.append(vx_C_array,p_C.Particles['vx'])
         vy_C_array = np.append(vy_C_array,p_C.Particles['vy'])
-        vz_C_array = np.append(vz_C_array,sign*p_C.Particles['vz'])
+        vz_C_array = np.append(vz_C_array,p_C.Particles['vz'])
+        
+        #print("Surface Index: ", surface_index,"   and vz:  ", sign*p_C.Particles['vz'])
         
         x_C_array = np.append(x_C_array,p_C.Particles['x'])
         y_C_array = np.append(y_C_array,p_C.Particles['y'])
@@ -389,23 +398,23 @@ for surface_index in range(len(x1)):
         #print(E_C)
         p_W.SetAttr('vz',E_W)
                 
-        if (surface_index>3):
-            sign = -1
-        else:
+        if (surface_index<4):
             sign = 1
+        else:
+            sign = -1
             
-            
+        p_W.ScaleAttr('vz',sign)      
             
         vx_W_array = np.append(vx_W_array,p_W.Particles['vx'])
         vy_W_array = np.append(vy_W_array,p_W.Particles['vy'])
-        vz_W_array = np.append(vz_W_array,sign*p_W.Particles['vz'])
+        vz_W_array = np.append(vz_W_array,p_W.Particles['vz'])
         
         x_W_array = np.append(x_W_array,p_W.Particles['x'])
         y_W_array = np.append(y_W_array,p_W.Particles['y'])
         z_W_array = np.append(z_W_array,p_W.Particles['z'])
         
         
-
+#%%
 # Writing the particle list for the next GITR run  
 p_C = ParticleDistribution()
 

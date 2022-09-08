@@ -107,3 +107,7 @@ FileNameParticle='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup
 InputParticle = Dataset(FileNameParticle, "r", format="NETCDF4")
 
 
+#%%
+
+
+    

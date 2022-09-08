@@ -13,7 +13,7 @@ Created on Wed Sep  7 17:51:50 2022
 import pyGITR
 import numpy as np
 #from single_microtrench  import Lxbc,Lybc
-ParticleFile='particleConf_C.nc'
+ParticleFile='particleConf.nc'
 GeometryFile='gitrGeom.cfg'
 #B0 = 2.25
 B0 = -0.0002
@@ -21,11 +21,11 @@ B0 = -0.0002
 thetaB = 0#2
 phiB = 0
 AxisrotB = [0,1,0]
-nP=10000
+nP=0#10000
 mi=2.0
 Elem='C'
 
-MassElem ={'C' : 12, 'D' : 2}
+MassElem ={'C' : 12, 'D' : 2, 'W' : 184}
 Mimp = MassElem.get(Elem)
 charge = 20
 Zmax = 6
@@ -51,10 +51,10 @@ p = pyGITR.ParticleDistribution()
 p.SetAttr('Np', nP+1)
 
 # Set positions of particles
-p.SetAttr('x','Uniform') #set values of y and z with uniformly distributed values between -0.05 and 0.05
-p.SetAttr('y','Uniform')
-p.SetAttr('z',0.5) # set all values of x to -0.01
-p.SetAttr(['x','y'],0.5) #set values of y and z with uniformly distributed values between -0.05 and 0.05
+#p.SetAttr('x','Uniform') #set values of y and z with uniformly distributed values between -0.05 and 0.05
+#p.SetAttr('y','Uniform')
+p.SetAttr('z',0.25) # set all values of x to -0.01
+p.SetAttr(['x','y'],2.0) #set values of y and z with uniformly distributed values between -0.05 and 0.05
 
 # Set velocities of particles
 #p.SetAttr(['vx'],'Gaussian',sigma=1, beta=0.5)
@@ -85,7 +85,17 @@ p.WriteParticleFile(ParticleFile)
 
 #%%
 
-ParticleFile='particleConf_C.nc'
+ParticleFile='particleConf.nc'
+
+
+
+Elem='W'
+Mimp = MassElem.get(Elem)
+charge = 20
+Zmax = 6
+
+B0 = -0.0002 # -0.0002 for C and 0.00 for W
+nP=10000
 
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)
@@ -112,7 +122,7 @@ Input.Input['flags'] = {
                     'USETHERMALFORCE':0,
                     'USESURFACEMODEL':0,
                     'USE_SURFACE_POTENTIAL':0,
-                    'USE_SHEATHEFIELD':1,
+                    'USE_SHEATHEFIELD':0,
                     'BIASED_SURFACE':0,
                     'USEPRESHEATHEFIELD':0,
                     'BFIELD_INTERP':0,

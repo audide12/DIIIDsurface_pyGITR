@@ -28,7 +28,7 @@ finally:
 height = 3.0
 width = 3.0
 z_down = 0.0
-z_up = 1.0
+z_up = 0.5
 x_center = 0.0
 y_center = 0.0
 tag_down = 1

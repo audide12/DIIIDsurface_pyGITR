@@ -11,15 +11,17 @@ Created on Thu Jul 14 14:21:44 2022
 import pyGITR
 import numpy as np
 #from single_microtrench  import Lxbc,Lybc
-ParticleFile='particleConf_W.nc'
+ParticleFile='particleConf.nc'
 GeometryFile='gitrGeom.cfg'
 #B0 = 2.25
-B0 = -0.000 # -0.0002 for C and 0.00 for W
+B0 = -0.0002 # -0.0002 for C and 0.00 for W
+nP = 10000
+
 
 thetaB = 0#2
 phiB = 0
 AxisrotB = [0,1,0]
-nP=100
+
 mi=2.0
 Elem='C'
 
@@ -51,14 +53,17 @@ p.SetAttr('Np', nP+1)
 # Set positions of particles
 p.SetAttr('x','Uniform') #set values of y and z with uniformly distributed values between -0.05 and 0.05
 p.SetAttr('y','Uniform')
-p.SetAttr('z',0.5) # set all values of x to -0.01
-p.SetAttr(['x','y'],0.5) #set values of y and z with uniformly distributed values between -0.05 and 0.05
+p.SetAttr('z',0.25) # set all values of x to -0.01
+p.SetAttr(['x','y'],2.0) #set values of y and z with uniformly distributed values between -0.05 and 0.05
 
 # Set velocities of particles
 #p.SetAttr(['vx'],'Gaussian',sigma=1, beta=0.5)
 #p.SetAttr(['vy','vz'],'Gaussian',sigma=1)
 p.SetAttr(['vz'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
+#p.SetAttr(['vz'],50000)
+
 p.SetAttr(['vy','vx'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
+#p.SetAttr(['vy','vx'],0.0)
 
 #p.Particles['vx'].mean()
 
@@ -66,6 +71,7 @@ p.SetAttr(['vy','vx'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
 #vpara = vimp
 #vperp = vimp
 vpara = 100
+#vpara = -1
 vperp = 0.0
 
 p.ScaleAttr(['vy','vx'],vperp)
@@ -83,9 +89,9 @@ p.WriteParticleFile(ParticleFile)
 
 #%%
 
-ParticleFile='particleConf_C.nc'
+ParticleFile='particleConf.nc'
 B0 = -0.0002 # -0.0002 for C and 0.00 for W
-
+nP=10000
 
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)
