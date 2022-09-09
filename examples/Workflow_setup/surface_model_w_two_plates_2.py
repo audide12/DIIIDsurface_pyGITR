@@ -6,48 +6,6 @@ Created on Thu Sep  8 16:16:25 2022
 @author: de
 """
 
-
-import electronvolt_num as units
-import io, libconf
-import numpy as np
-import pyGITR
-import netCDF4
-from netCDF4 import Dataset
-import os
-import math
-
-#Calculate Flux_C and obtain Flux_H
-
-#Flux_H = 1.43222e+19 # Obtained from SOLPS simulation (Zack)
-
-Flux_H = 1.0e20
-alpha_c = 0.02       # Carbon concentration in the background plasma
-Flux_C = alpha_c*Flux_H
-
-Delta_t = 0.1 # in seconds
-Delta_t_gitr = 1e-7
-Delta_implant = 1e-5 # enter parameter value and units
-amu_C = 12 #for carbon
-amu_W = 74 #for tungsten
-
-n_atom = 6e22 # average number density
-weight_gitr = Delta_t/Delta_t_gitr
-#weight_gitr = 1
-
-
-
-Sputtering_yield_H_to_C = 0.005  # max 0.005
-Sputtering_yield_C_to_C = 0.22   # 0.22 treated almost constant
-
-Sputtering_yield_H_to_W = 0.002  # max 0.002 
-Sputtering_yield_C_to_W = 0.5  # 0.5 treated almost constant
-
-Reflection_yield_C_to_C = 0.005    # max 0.005 min 0.001  steady-state :  0.9
-Reflection_yield_C_to_W = 0.75  # max 0.95 min 0.67    steady-state :  0.005
-
-#Calculate Edist_H
-
-#%%
 # Reading position files of Carbon
 
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_C/positions.nc'
@@ -114,35 +72,6 @@ print(count_W)
 
 
 
-#%%
-#Reading geometry files
-
-filename="gitrGeom.cfg"
-
-with io.open(filename) as f:
-    config = libconf.load(f)
-
-x1 = np.array(config.geom.x1)
-x2 = np.array(config.geom.x2)
-x3 = np.array(config.geom.x3)
-y1 = np.array(config.geom.y1)
-y2 = np.array(config.geom.y2)
-y3 = np.array(config.geom.y3)
-z1 = np.array(config.geom.z1)
-z2 = np.array(config.geom.z2)
-z3 = np.array(config.geom.z3)
-area = np.array(config.geom.area)
-surf = np.array(config.geom.surface)
-Z = np.array(config.geom.Z)
-materialSurfaceInidces = np.nonzero(Z)
-surfIndArray = np.asarray(materialSurfaceInidces)
-a = np.array(config.geom.a)
-b = np.array(config.geom.b)
-c = np.array(config.geom.c)
-d = np.array(config.geom.d)
-
-in_direction = np.array(config.geom.inDir)
-plane_norm = np.array(config.geom.plane_norm)
 
 
 #%%

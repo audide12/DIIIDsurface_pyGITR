@@ -95,7 +95,7 @@ charge = 20
 Zmax = 6
 
 B0 = -0.0002 # -0.0002 for C and 0.00 for W
-nP=10000
+nP=nP_W_global#10000
 
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)

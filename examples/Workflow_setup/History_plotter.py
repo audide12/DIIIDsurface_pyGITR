@@ -101,10 +101,36 @@ s_time[:] = Surface_time
 s_concentration[:,:] = C_C
 
 ncFile.close()
+
 #%%
 
-FileNameParticle='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/particleConf_C.nc' 
-InputParticle = Dataset(FileNameParticle, "r", format="NETCDF4")
+#Reading the surface features from the surface evolution netcdf file
+
+FileNameSurfaceConcentration='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C_W.nc'
+
+SurfaceConcentrationData = Dataset(FileNameSurfaceConcentration, "r", format="NETCDF4")
+
+
+C_C = SurfaceConcentrationData['surface_concentration_C'][:,:]
+C_W = SurfaceConcentrationData['surface_concentration_W'][:,:]
+Flux_proportionality_C = SurfaceConcentrationData['Flux_Conversion_C'][:]
+Flux_proportionality_W = SurfaceConcentrationData['Flux_Conversion_W'][:]
+
+Surface_time = SurfaceConcentrationData['time'][:]
+Surface_number = SurfaceConcentrationData['surface_number'][:]
+
+counter = len(Surface_time)
+
+#%%
+import matplotlib.pyplot as plt    
+
+surface_index_C = 0
+surface_index_W = 0
+plt.figure()
+plt.plot(Surface_time,C_C[surface_index_C,:],'k',label='C_C')
+plt.plot(Surface_time,C_W[surface_index_W,:],'r',label='C_W')
+plt.legend()
+plt.show()
 
 
 #%%
