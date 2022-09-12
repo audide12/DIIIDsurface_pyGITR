@@ -85,17 +85,28 @@ p.WriteParticleFile(ParticleFile)
 
 #%%
 
-ParticleFile='particleConf.nc'
+import pyGITR
+import numpy as np
 
+GeometryFile='gitrGeom.cfg'
 
+ParticleFile='particleSource_test.nc'
 
-Elem='W'
+thetaB = 0#2
+phiB = 0
+AxisrotB = [0,1,0]
+nP=0#10000
+mi=2.0
+V= -1
+
+Elem='C'
+MassElem ={'C' : 12, 'D' : 2, 'W' : 184}
 Mimp = MassElem.get(Elem)
 charge = 20
 Zmax = 6
 
 B0 = -0.0002 # -0.0002 for C and 0.00 for W
-nP=nP_W_global#10000
+nP=10000 # nP_W_global
 
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)

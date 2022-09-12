@@ -135,5 +135,13 @@ plt.show()
 
 #%%
 
+FileName='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/particleConf_C.nc'
+FileName2='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/particleSource_test.nc'
+
+ParticleData = Dataset(FileName, "r", format="NETCDF4")
+ParticleData2 = Dataset(FileName2, "r", format="NETCDF4")
+
+
+
 
     
