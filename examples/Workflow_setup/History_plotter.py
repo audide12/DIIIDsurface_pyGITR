@@ -124,8 +124,8 @@ counter = len(Surface_time)
 #%%
 import matplotlib.pyplot as plt    
 
-surface_index_C = 0
-surface_index_W = 0
+surface_index_C = 6
+surface_index_W = 6
 plt.figure()
 plt.plot(Surface_time,C_C[surface_index_C,:],'k',label='C_C')
 plt.plot(Surface_time,C_W[surface_index_W,:],'r',label='C_W')

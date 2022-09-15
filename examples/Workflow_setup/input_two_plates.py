@@ -17,11 +17,13 @@ ParticleFile='particleConf.nc'
 GeometryFile='gitrGeom.cfg'
 #B0 = 2.25
 B0 = -0.0002
+nP=0#10000
+
 
 thetaB = 0#2
 phiB = 0
 AxisrotB = [0,1,0]
-nP=0#10000
+
 mi=2.0
 Elem='C'
 
@@ -68,7 +70,7 @@ p.SetAttr(['vy','vx'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
 #vpara = vimp
 #vperp = vimp
 vpara = 100
-vperp = 0.0
+vperp = 1.0
 
 p.ScaleAttr(['vy','vx'],vperp)
 
@@ -90,23 +92,29 @@ import numpy as np
 
 GeometryFile='gitrGeom.cfg'
 
-ParticleFile='particleSource_test.nc'
+ParticleFile='particleConf.nc'
+Elem='C'
+nP=nP_C_global #10000 # nP_W_global
 
 thetaB = 0#2
 phiB = 0
 AxisrotB = [0,1,0]
-nP=0#10000
+
 mi=2.0
 V= -1
 
-Elem='C'
-MassElem ={'C' : 12, 'D' : 2, 'W' : 184}
-Mimp = MassElem.get(Elem)
+
+
+
 charge = 20
 Zmax = 6
 
+
+MassElem ={'C' : 12, 'D' : 2, 'W' : 184}
+Mimp = MassElem.get(Elem)
+
+
 B0 = -0.0002 # -0.0002 for C and 0.00 for W
-nP=10000 # nP_W_global
 
 Input = pyGITR.Input()
 Input.SetBField(B0=B0, theta = thetaB, phi = phiB)
