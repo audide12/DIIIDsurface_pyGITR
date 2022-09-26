@@ -23,15 +23,14 @@ Energy_particles_C = np.array(0.5*amu_C*1.66e-27*(surface_vx_C**2 + surface_vy_C
 
 
 count_C = 0
-count_C_6 = 0
+
 
 for i in surfacehit_C:
     if i != -1:
         count_C+=1
-    if i == 6:
-        count_C_6+=1
+    
 print(count_C)
-print(count_C_6)
+
 
 #weight_flux_C = token_flux/count_C # this is the delta Gamma in the pdf
 
@@ -99,7 +98,7 @@ counter = len(Surface_time)
 Gamma_C_redep = np.zeros((len(x1),1))
 Y_CW_Gamma_C_redep = np.zeros((len(x1),1))
 Y_CC_Gamma_C_redep = np.zeros((len(x1),1))
-Y_WC_Gamma_C_redep = np.zeros((len(x1),1))
+
 
 
 
@@ -113,10 +112,11 @@ for i in range(len(Energy_particles_C)):
         Gamma_C_redep[surface_index] = Gamma_C_redep[surface_index] + Flux_C_local  # check this
         Y_CW_Gamma_C_redep[surface_index] = Y_CW_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','W',Energy_particles_C[i])*Flux_C_local
         Y_CC_Gamma_C_redep[surface_index] = Y_CC_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_particles_C[i])*Flux_C_local
-        Y_WC_Gamma_C_redep[surface_index] = Y_WC_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','C',Energy_particles_C[i])*Flux_C_local
+        
 
 Gamma_W_redep = np.zeros((len(x1),1))
 Y_WW_Gamma_W_redep = np.zeros((len(x1),1))
+Y_WC_Gamma_W_redep = np.zeros((len(x1),1))
         
 for i in range(len(Energy_particles_W)):
     if surfacehit_W[i] != -1:
@@ -127,13 +127,13 @@ for i in range(len(Energy_particles_W)):
         
         Gamma_W_redep[surface_index] = Gamma_W_redep[surface_index] + Flux_W_local  # check this
         Y_WW_Gamma_W_redep[surface_index] = Y_WW_Gamma_W_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','W',Energy_particles_W[i])*Flux_W_local
-    
+        Y_WC_Gamma_W_redep[surface_index] = Y_WC_Gamma_W_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','C',Energy_particles_W[i])*Flux_W_local
              
         
 chi_W_ero =  Y_WW_Gamma_W_redep + Y_CW_Gamma_C_redep + Sputtering_yield_H_to_W*Flux_H + Sputtering_yield_C_to_W*Flux_C    
 
 chi_C_ero_1 =  Y_CC_Gamma_C_redep + Sputtering_yield_H_to_C*Flux_H + Sputtering_yield_C_to_C*Flux_C   
-chi_C_ero_2 =  Y_WC_Gamma_C_redep
+chi_C_ero_2 =  Y_WC_Gamma_W_redep
 
 chi_C_dep_1 = np.zeros((len(x1),1)) + (1-Reflection_yield_C_to_C)*Flux_C
 chi_C_dep_2 = np.zeros((len(x1),1)) + (1-Reflection_yield_C_to_W)*Flux_C
@@ -333,22 +333,69 @@ p_W.SetAttr('vz',vz_W_array)
 # Writing the particle source file for the next GITR run.
 p_W.WriteParticleFile('particleConf_W.nc')
 
-#run the next simulation        
-        
 #%%
 
+# Estimating the total time evolution for the surface model
 
+last_entry_C = np.reshape(C_C[:,-1],(len(x1),1))
+last_entry_W = np.reshape(C_W[:,-1],(len(x1),1))
+
+Gamma_W_ero = last_entry_W*chi_W_ero
+Gamma_C_ero = last_entry_C*chi_C_ero_1 + last_entry_W*chi_C_ero_2
+Gamma_C_dep = last_entry_C*chi_C_dep_1 + last_entry_W*chi_C_dep_2 + Gamma_C_redep 
+Gamma_W_dep = Gamma_W_redep
+
+Gamma_C_net = Gamma_C_dep - Gamma_C_ero
+
+Gamma_W_net = -Gamma_W_ero
+
+Gamma_C_bulk = np.zeros((len(x1),1))
+Gamma_W_bulk = np.zeros((len(x1),1))
+
+#print(Gamma_C_net)
+
+for surface_index in range(len(x1)):
+    if (Gamma_C_net[surface_index] + Gamma_W_net[surface_index]) > 0: # deposition regime
+        #print("deposition")
+        Gamma_C_bulk[surface_index] = last_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+        Gamma_W_bulk[surface_index] = last_entry_W[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+    
+    else:  #  erosion regime
+        #print("erosion")
+        Gamma_C_bulk[surface_index] = 0
+        Gamma_W_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+
+
+RHS_C = Gamma_C_net - Gamma_C_bulk
+RHS_W = Gamma_W_net - Gamma_W_bulk
+
+Stopping_criteria = 0.1 # for C_C and C_W
+        
+Delta_t_surface_estimate_C = (Delta_implant*n_atom*Stopping_criteria)/RHS_C
+
+Delta_t_surface_estimate_W = (Delta_implant*n_atom*Stopping_criteria)/RHS_W
+
+Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surface_estimate_C))
+
+
+
+#%%
 # The actual surface model differential equation
-
 # Evolution of C_C and C_W
+# Stopping criterion implemented
+# Delta_t is a constant for the surface model
 
-Time = Delta_t
+Time = Delta_t_surface
 Time_steps = 1e4
 Delta_Time = Delta_t/Time_steps
+Delta_t_Stopping = 0
+Stopping_criteria = 0.1 # for C_C and C_W
+
 
 new_entry_C = np.reshape(C_C[:,-1],(len(x1),1))
 
 new_entry_W = np.reshape(C_W[:,-1],(len(x1),1))
+
 #new_entry_C = np.zeros(len(x1))
 
 #new_entry_C[:] =  old_C[:] + Delta_Time*(Gamma_C_net_global[:] - old_C[:]*Gamma_C_bulk_global[:])/(Delta_implant*n_atom)
@@ -390,6 +437,13 @@ for t in range(1,int(Time_steps)):
     new_entry_C = new_entry_C + Delta_Time*(Gamma_C_net - Gamma_C_bulk)/(Delta_implant*n_atom)
     
     new_entry_W = new_entry_W + Delta_Time*(Gamma_W_net - Gamma_W_bulk)/(Delta_implant*n_atom)
+    
+    Delta_t_Stopping += Delta_Time
+        
+    if (np.abs(new_entry_C-last_entry_C)>Stopping_criteria).any() or (np.abs(new_entry_W-last_entry_W)>Stopping_criteria).any():
+        print(Delta_t_Stopping," Delta_t_Stopping ", t)
+        break
+        
         
 
 #%%
@@ -401,7 +455,7 @@ C_W = np.concatenate((C_W,new_entry_W),axis=1)
 Flux_proportionality_C = np.append(Flux_proportionality_C,(1/prop_C))
 Flux_proportionality_W = np.append(Flux_proportionality_W,(1/prop_W))
 
-Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t)
+Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t_Stopping)
 
 #Writing the surface features with time
 
@@ -428,5 +482,25 @@ ncFile.close()
 
 #%%
 
+runcell(0, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(1, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(2, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(3, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(4, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(5, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(6, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(7, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')
+runcell(8, '/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/surface_model_w_two_plates_2.py')    
     
-    
+
+#%%
+import matplotlib.pyplot as plt    
+
+surface_index_C = 6
+surface_index_W = 6
+plt.figure()
+plt.plot(Surface_time,C_C[surface_index_C,:],'k',label='C_C')
+plt.plot(Surface_time,C_W[surface_index_W,:],'r',label='C_W')
+plt.legend()
+plt.title("Surface Element 6")
+plt.show()

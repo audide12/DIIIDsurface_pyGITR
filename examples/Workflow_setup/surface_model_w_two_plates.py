@@ -28,12 +28,12 @@ Delta_t = 0.1 # in seconds
 Delta_t_gitr = 1e-7
 Delta_implant = 1e-5 # enter parameter value and units
 amu_C = 12 #for carbon
-amu_W = 74 #for tungsten
+amu_W = 184 #for tungsten
 
 n_atom = 6e22 # average number density
 weight_gitr = Delta_t/Delta_t_gitr
 #weight_gitr = 1
-
+Stopping_criteria = 0.1 # for C_C and C_W
 
 
 Sputtering_yield_H_to_C = 0.005  # max 0.005
@@ -73,7 +73,7 @@ for i in surfacehit_C:
     if i == 6:
         count_C_6+=1
 print(count_C)
-print(count_C_6)
+#print(count_C_6)
 
 #weight_flux_C = token_flux/count_C # this is the delta Gamma in the pdf
 
@@ -151,11 +151,11 @@ plane_norm = np.array(config.geom.plane_norm)
 C_C = np.full((len(x1),1),0.0)
 C_W = np.full((len(x1),1),0.0)
 
-for k in range(len(x1)):
-    if k<4:
-        C_C[k] = 1.0
+for surface_index in range(len(x1)):
+    if surface_index<4:
+        C_C[surface_index] = 1.0
     else:
-        C_W[k] = 1.0
+        C_W[surface_index] = 1.0
 
 
 
@@ -220,7 +220,7 @@ counter = len(Surface_time)
 Gamma_C_redep = np.zeros((len(x1),1))
 Y_CW_Gamma_C_redep = np.zeros((len(x1),1))
 Y_CC_Gamma_C_redep = np.zeros((len(x1),1))
-Y_WC_Gamma_C_redep = np.zeros((len(x1),1))
+
 
 
 
@@ -234,10 +234,11 @@ for i in range(len(Energy_particles_C)):
         Gamma_C_redep[surface_index] = Gamma_C_redep[surface_index] + Flux_C_local  # check this
         Y_CW_Gamma_C_redep[surface_index] = Y_CW_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','W',Energy_particles_C[i])*Flux_C_local
         Y_CC_Gamma_C_redep[surface_index] = Y_CC_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_particles_C[i])*Flux_C_local
-        Y_WC_Gamma_C_redep[surface_index] = Y_WC_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','C',Energy_particles_C[i])*Flux_C_local
+        
 
 Gamma_W_redep = np.zeros((len(x1),1))
 Y_WW_Gamma_W_redep = np.zeros((len(x1),1))
+Y_WC_Gamma_W_redep = np.zeros((len(x1),1))
         
 for i in range(len(Energy_particles_W)):
     if surfacehit_W[i] != -1:
@@ -248,13 +249,13 @@ for i in range(len(Energy_particles_W)):
         
         Gamma_W_redep[surface_index] = Gamma_W_redep[surface_index] + Flux_W_local  # check this
         Y_WW_Gamma_W_redep[surface_index] = Y_WW_Gamma_W_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','W',Energy_particles_W[i])*Flux_W_local
-    
+        Y_WC_Gamma_W_redep[surface_index] = Y_WC_Gamma_W_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','C',Energy_particles_W[i])*Flux_W_local
              
         
 chi_W_ero =  Y_WW_Gamma_W_redep + Y_CW_Gamma_C_redep + Sputtering_yield_H_to_W*Flux_H + Sputtering_yield_C_to_W*Flux_C    
 
 chi_C_ero_1 =  Y_CC_Gamma_C_redep + Sputtering_yield_H_to_C*Flux_H + Sputtering_yield_C_to_C*Flux_C   
-chi_C_ero_2 =  Y_WC_Gamma_C_redep
+chi_C_ero_2 =  Y_WC_Gamma_W_redep
 
 chi_C_dep_1 = np.zeros((len(x1),1)) + (1-Reflection_yield_C_to_C)*Flux_C
 chi_C_dep_2 = np.zeros((len(x1),1)) + (1-Reflection_yield_C_to_W)*Flux_C
@@ -454,21 +455,64 @@ p_W.SetAttr('vz',vz_W_array)
 # Writing the particle source file for the next GITR run.
 p_W.WriteParticleFile('particleConf_W.nc')
 
-#run the next simulation        
-        
 #%%
 
+# Estimating the total time evolution for the surface model
 
+last_entry_C = np.reshape(C_C[:,-1],(len(x1),1))
+last_entry_W = np.reshape(C_W[:,-1],(len(x1),1))
+
+Gamma_W_ero = last_entry_W*chi_W_ero
+Gamma_C_ero = last_entry_C*chi_C_ero_1 + last_entry_W*chi_C_ero_2
+Gamma_C_dep = last_entry_C*chi_C_dep_1 + last_entry_W*chi_C_dep_2 + Gamma_C_redep 
+Gamma_W_dep = Gamma_W_redep
+
+Gamma_C_net = Gamma_C_dep - Gamma_C_ero
+
+Gamma_W_net = -Gamma_W_ero
+
+Gamma_C_bulk = np.zeros((len(x1),1))
+Gamma_W_bulk = np.zeros((len(x1),1))
+
+#print(Gamma_C_net)
+
+for surface_index in range(len(x1)):
+    if (Gamma_C_net[surface_index] + Gamma_W_net[surface_index]) > 0: # deposition regime
+        #print("deposition")
+        Gamma_C_bulk[surface_index] = last_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+        Gamma_W_bulk[surface_index] = last_entry_W[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+    
+    else:  #  erosion regime
+        #print("erosion")
+        Gamma_C_bulk[surface_index] = 0
+        Gamma_W_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+
+
+RHS_C = Gamma_C_net - Gamma_C_bulk
+RHS_W = Gamma_W_net - Gamma_W_bulk
+
+Stopping_criteria = 0.1 # for C_C and C_W
+        
+Delta_t_surface_estimate_C = (Delta_implant*n_atom*Stopping_criteria)/RHS_C
+
+Delta_t_surface_estimate_W = (Delta_implant*n_atom*Stopping_criteria)/RHS_W
+
+Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surface_estimate_C))        
+
+
+#%%
 # The actual surface model differential equation
-
 # Evolution of C_C and C_W
+# Stopping criterion implemented
+# Delta_t is a constant for the surface model
 
-Time = Delta_t
+Time = Delta_t_surface
 Time_steps = 1e4
 Delta_Time = Delta_t/Time_steps
+Delta_t_Stopping = 0
+Stopping_criteria = 0.1 # for C_C and C_W
 
 new_entry_C = np.reshape(C_C[:,-1],(len(x1),1))
-
 new_entry_W = np.reshape(C_W[:,-1],(len(x1),1))
 #new_entry_C = np.zeros(len(x1))
 
@@ -511,6 +555,12 @@ for t in range(1,int(Time_steps)):
     new_entry_C = new_entry_C + Delta_Time*(Gamma_C_net - Gamma_C_bulk)/(Delta_implant*n_atom)
     
     new_entry_W = new_entry_W + Delta_Time*(Gamma_W_net - Gamma_W_bulk)/(Delta_implant*n_atom)
+    
+    Delta_t_Stopping += Delta_Time
+        
+    if (np.abs(new_entry_C-last_entry_C)>Stopping_criteria).any() or (np.abs(new_entry_W-last_entry_W)>Stopping_criteria).any():
+        print(Delta_t_Stopping," Delta_t_Stopping ", t)
+        break
         
 
 #%%
@@ -522,11 +572,13 @@ C_W = np.concatenate((C_W,new_entry_W),axis=1)
 Flux_proportionality_C = np.append(Flux_proportionality_C,(1/prop_C))
 Flux_proportionality_W = np.append(Flux_proportionality_W,(1/prop_W))
 
-Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t)
+Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t_Stopping)
 
 #Writing the surface features with time
 
-ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C_W_new.nc', 'w', format='NETCDF4')
+os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C_W.nc")
+
+ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/input/surface_evolution_C_W.nc', 'w', format='NETCDF4')
 s_number_dim = ncFile.createDimension('surface_dim', len(x1)) # surface number dimension
 s_time_dim = ncFile.createDimension('time_dim', len(Surface_time)) # time dimension
 
