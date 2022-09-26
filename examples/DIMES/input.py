@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Sep  7 17:51:50 2022
+Created on Tue Sep 20 14:11:45 2022
 
 @author: de
 """
-
 
 
 # -*- coding: utf-8 -*-
@@ -15,9 +14,9 @@ import numpy as np
 #from single_microtrench  import Lxbc,Lybc
 ParticleFile='particleConf.nc'
 GeometryFile='gitrGeom.cfg'
-#B0 = 2.25
-B0 = -0.0002
-nP=0#10000
+B0 = 2.25
+#B0 = -0.0002
+nP=10000#10000
 
 
 thetaB = 0#2
@@ -55,8 +54,10 @@ p.SetAttr('Np', nP+1)
 # Set positions of particles
 #p.SetAttr('x','Uniform') #set values of y and z with uniformly distributed values between -0.05 and 0.05
 #p.SetAttr('y','Uniform')
-p.SetAttr('z',0.25) # set all values of x to -0.01
-p.SetAttr(['x','y'],2.0) #set values of y and z with uniformly distributed values between -0.05 and 0.05
+
+p.SetAttr('x',1.5) 
+p.SetAttr('y',0.0)
+p.SetAttr('z',0.1)
 
 # Set velocities of particles
 #p.SetAttr(['vx'],'Gaussian',sigma=1, beta=0.5)
@@ -93,13 +94,11 @@ import numpy as np
 GeometryFile='gitrGeom.cfg'
 
 ParticleFile='particleConf.nc'
-<<<<<<< HEAD
+Backgroundplasma = 'profiles_created.nc'
+
+
 Elem='C'
-nP=nP_C_global #10000 # nP_W_global
-=======
-Elem='W'
-nP=nP_W_global #10000 # nP_W_global
->>>>>>> 72472f7 (added stuff)
+nP=10000 #10000 # nP_W_global
 
 thetaB = 0#2
 phiB = 0
@@ -128,9 +127,10 @@ Input.SetTimeStep(dt=1e-7, nT=1000)
 
 Input.SetGeometryFile(GeometryFile)
 Input.SetParticleSource(ParticleFile, nP=nP, Zmax=Zmax, M=Mimp, Z=charge)
-Input.SetBackgroundPlasmaProfiles(Voltage=V)
+Input.SetBackgroundPlasmaProfiles()
 Input.SetSurfaces()
 Input.SetDiagnostics()
+
 Input.Input['flags'] = {
                     'USE_CUDA':0,
                     'USE_MPI':0,
@@ -139,10 +139,10 @@ Input.Input['flags'] = {
                     'USE_RECOMBINATION':1,
                     'USEPERPDIFFUSION':0,
                     'USEPARDIFFUSION':0,
-                    'USECOULOMBCOLLISIONS':0,
-                    'USEFRICTION':0,
-                    'USEANGLESCATTERING':0,
-                    'USEHEATING':0,
+                    'USECOULOMBCOLLISIONS':1,
+                    'USEFRICTION':1,
+                    'USEANGLESCATTERING':1,
+                    'USEHEATING':1,
                     'USETHERMALFORCE':0,
                     'USESURFACEMODEL':0,
                     'USE_SURFACE_POTENTIAL':0,
@@ -171,7 +171,7 @@ Input.Input['flags'] = {
                     'PARTICLE_SOURCE_FILE':1,
                     'SPECTROSCOPY':3,
                     'USE3DTETGEOM':1,
-                    'USECYLSYMM':0,
+                    'USECYLSYMM':1,
                     'USEFIELDALIGNEDVALUES':0,
                     'FLUX_EA':1,
                     'FORCE_EVAL':0,
@@ -179,6 +179,16 @@ Input.Input['flags'] = {
                     'CHECK_COMPATIBILITY':1,
                     'USE_ADAPTIVE_DT':0
                     }
+
+
+Input.Input['backgroundPlasmaProfiles']['Bfield']['interpolation'] = 1 # in fields.cpp, only needs to be >0
+Input.Input['backgroundPlasmaProfiles']['Bfield']['fileString'] = "bField.nc"
+
+Input.Input['backgroundPlasmaProfiles']['Efield']['fileString'] = "profiles_created.nc"
+
+Input.Input['flags']['BFIELD_INTERP'] = 2
+
+
 
 Input.WriteInputFile(Folder='input', OverWrite=True)
 #%%
