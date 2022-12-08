@@ -46,9 +46,9 @@ zBox = zDiMES
 # dyBox = rDiMES*8.5
 # dzBox = rDiMES*8.5
 
-dxBox = rDiMES*10
-dyBox = rDiMES*10
-dzBox = rDiMES*10
+dxBox = rDiMES*3
+dyBox = rDiMES*3
+dzBox = rDiMES*3
 
 # Define metal rings
 dxBlock = 0.05

@@ -4,8 +4,6 @@ Version: 0.0.0
 Summary: Toolbox for GITR
 Author: J. Guterl
 Author-email: guterlj@fusion.gat.com
-License: UNKNOWN
-Platform: UNKNOWN
 Classifier: Development Status :: 4 - Beta
 Classifier: Topic :: Software Development
 Classifier: Programming Language :: Python :: 3
@@ -16,6 +14,3 @@ Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3 :: Only
 Requires-Python: >=3.5, <4
 Description-Content-Type: text/markdown
-
-UNKNOWN
-

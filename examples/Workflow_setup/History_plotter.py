@@ -63,7 +63,7 @@ ax[3].plot(np.arange(0,S.shape[0]),S)
 #%%
 # History plotting
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_W/history.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/Simulations/Simulation 1/output_W_3/history.nc'
 HistoryData = Dataset(FileNameHistory, "r", format="NETCDF4")
 x = np.array(HistoryData.variables['x'])
 z = np.array(HistoryData.variables['z'])

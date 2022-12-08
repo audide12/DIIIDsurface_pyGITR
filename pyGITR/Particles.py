@@ -2,7 +2,7 @@
 
 
 import numpy as np
-from pyGITR.math_helper import *
+#from pyGITR.math_helper import *
 from typing import Callable
 import matplotlib.pyplot as plt
 import pydoc
@@ -32,7 +32,15 @@ class Distribs():
     #     if Normalized:
     #         f = f/Integrale(f, x, Array=False)
     #     return f
-
+    
+    def Gaussian_Jerome(x: np.ndarray = np.linspace(-10, 10, 10000), sigma: float = 1.0, mu: float = 0.0, beta: float = 0.0, Normalized=True):
+        f = np.abs(x)**beta*np.exp(-1.0/2.0*((x-mu)/sigma)**2)
+        if beta > 0:
+            f[np.argwhere(x<0)] = 0
+        if Normalized:
+            f = f/Integrale(f, x, Array=False)
+        return f
+    
     def Thomson(x: np.ndarray = np.linspace(0, 300, 10000), xb: float = 8.64, xc: float = 100, Normalized=True):
         assert not (xc <= xb), "xc cannot be <= xb"
         f = x/(x + xb) ** 3*(1.0-np.sqrt((x+xb)/(xc+xb)))
@@ -65,6 +73,9 @@ class Distribs():
         if Normalized:
             f = f/Integrale(f, x, Array=False)
         return f
+    
+    def Levy(x=np.linspace(0.001,10,10000), c=1, mu=0):
+        return np.sqrt(c/2/np.pi)*np.exp(-c/(x-mu))/((x-mu)**1.5)
 
     @classmethod
     def GetPdf(cls, f:str or Callable[np.array, np.ndarray], **kwargs) -> (np.ndarray,np.ndarray):

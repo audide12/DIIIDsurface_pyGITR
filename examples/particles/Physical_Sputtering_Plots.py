@@ -71,7 +71,7 @@ plt.figure()
        
 
 Energies = np.linspace(0.1,1e5,10000)
-Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields('W', 'W')
+Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields('H', 'Si')
 
 
 plt.loglog(Energies,Sputtering.real,'ro')
@@ -80,7 +80,7 @@ plt.ylim(1e-5,2)
 
 plt.xlabel('E_incident(eV)')
 plt.ylabel('Sputering Yield (Y)')
-plt.title(r'$W \rightarrow W$')
+plt.title(r'$D \rightarrow Si$')
 
 
 # Reflection = Physical_Sputtering_Reflection_Plots.Reflection_yields('C', 'W')

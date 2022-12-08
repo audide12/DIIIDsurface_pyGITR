@@ -1,5 +1,5 @@
 import numpy as np
-from pyGITR.math_helper import *
+#from pyGITR.math_helper import *
 from typing import Callable
 import matplotlib.pyplot as plt
 import pydoc
@@ -183,10 +183,78 @@ class Sputtering_and_reflection():
         else:
             print('Choose a different set of projectile and target')    
             
+    
             
     
+    @classmethod
+    def Calculate_PhysicalSputtering_RotationFactor(cls, Projectile, Target, Incident_Energy, Incident_Theta):
         
-    def Calculate_PhysicalSputteringParameters(self, Projectile, Target, Incident_Energy):
+        
+        flag = 1 # change it to zero if not found from the list 
+        
+        from scipy.interpolate import interp1d
+        
+        if Projectile == 'H' and Target =='C':
+            Sputtering_Dictionary = Sputtering_Rotation_H_C
+            
+        elif Projectile == 'D' and Target =='C':
+            Sputtering_Dictionary = Sputtering_Rotation_D_C
+            
+        elif Projectile == 'T' and Target =='C':
+            Sputtering_Dictionary = Sputtering_Rotation_T_C    
+        
+        elif Projectile == 'C' and Target =='C':
+            Sputtering_Dictionary = Sputtering_Rotation_C_C    
+            
+        elif Projectile == 'D' and Target =='Si':
+            Sputtering_Dictionary = Sputtering_Rotation_D_Si    
+                        
+        elif Projectile == 'Si' and Target =='Si':
+            Sputtering_Dictionary = Sputtering_Rotation_Si_Si
+            
+        elif Projectile == 'H' and Target =='W':
+            Sputtering_Dictionary = Sputtering_Rotation_H_W
+            
+        elif Projectile == 'D' and Target =='W':
+            Sputtering_Dictionary = Sputtering_Rotation_D_W
+            
+        elif Projectile == 'T' and Target =='W':
+            Sputtering_Dictionary = Sputtering_Rotation_T_W
+            
+        elif Projectile == 'W' and Target =='W':
+            Sputtering_Dictionary = Sputtering_Rotation_W_W  
+            
+        elif Projectile == 'W' and Target =='C':
+            Sputtering_Dictionary = Sputtering_Rotation_W_C  
+            
+        elif Projectile == 'C' and Target =='W':
+            Sputtering_Dictionary = Sputtering_Rotation_C_W      
+            
+        else:
+            flag = 0
+                
+        if flag == 1:
+            f_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['f'], kind='cubic')
+            b_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['b'], kind='cubic')
+            c_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['c'], kind='cubic')
+            Theta0star_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['Theta0_star'], kind='cubic')
+            
+            cosine_factor = np.cos(np.pi*0.5*Incident_Theta/Theta0star_interpolate(Incident_Energy))**c_interpolate(Incident_Energy)
+            
+            factor = (cosine_factor)**(-f_interpolate(Incident_Energy)) * np.exp(b_interpolate(Incident_Energy)*(1-(1/cosine_factor) )) 
+            
+            return factor
+        
+        else:
+            return 1
+        
+            
+        
+        
+        
+    
+    
+    def Calculate_PhysicalSputteringParameters(self, Projectile, Target, Incident_Energy, Incident_Theta:float=0):
         Sputtering_and_reflection.Set_PhysicalSputteringParameters(Projectile,Target)
         Sputtering_and_reflection.Set_Mass_AtomicN(Projectile,Target)
         
@@ -208,13 +276,7 @@ class Sputtering_and_reflection():
         
         Y = self.q_parameter*Nuclear_stopping*Numerator**self.mu_parameter/(self.lambda_parameter + Numerator**self.mu_parameter)
         
-        #return Y.real
-        #return Y
-        # print(Numerator)
-        # Numerator = abs(float(format(Numerator, '.2g')))
-        # print(Numerator)
-        # print(np.power(Numerator,2.344))
-        
+        Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
         
         return Y
     

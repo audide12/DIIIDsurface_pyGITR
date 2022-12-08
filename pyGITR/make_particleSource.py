@@ -9,9 +9,13 @@ rotate to magnetic field reference frame?
 need to more velocity rotations into the surface loop
 """
 from pyGITR.particleSource_functions import *
+import os
 
 def makeParticleSource(data,geomFile,particleFile):
     x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surface,indir = loadCFG(geomFile=geomFile)
+    
+    
+    particleFile1 = '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_temp.nc'
 
     # Generate positions per mesh element
     nP = 0
@@ -32,7 +36,7 @@ def makeParticleSource(data,geomFile,particleFile):
 
             surface_x, surface_y, surface_z = [x1[i],x2[i],x3[i],x1[i]], \
                     [y1[i],y2[i],y3[i],y1[i]], [z1[i],z2[i],z3[i],z1[i]]
-            zmin,zmax = min(zr), max(zr)
+            #zmin,zmax = min(zr), max(zr)
 
             # plotPointsAndElement(surface_x,surface_y,surface_z,xr,yr,zr,a[i],b[i],c[i],indir[i])
 
@@ -41,6 +45,7 @@ def makeParticleSource(data,geomFile,particleFile):
                 _b.append(b[i])
                 _c.append(c[i])
                 _indir.append(indir[i])
+
 
     x,y,z = np.array(x),np.array(y),np.array(z)
     print("total number of particles in source:",nP)
@@ -57,21 +62,37 @@ def makeParticleSource(data,geomFile,particleFile):
     p.SetAttr('z',z)
 
     # Set velocities of particles
-    p.SetAttr(['vx','vy'],'Gaussian')
-    p.SetAttr(['vz'],LevyDistrib, x=np.linspace(0.001,10,1000), c=2, mu=0)
+    #p.SetAttr(['vx','vy'],'Gaussian')
+    #p.SetAttr(['vz'],LevyDistrib, x=np.linspace(0.001,10,1000), c=2, mu=0)
+    
+    # p.SetAttr(['vz'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
+    # p.SetAttr(['vy','vx'],'Gaussian',sigma = 1.825e4,beta=3.16e14)
+
+    # vpara = 1.0
+    # vperp = 10.0 #5
+    # #p.ScaleAttr(['vx','vz'],vperp)
+    
+    # p.ScaleAttr('vx',vperp)
+    
+    # p.ScaleAttr('vy',vpara)
+    
+    
+    p.SetAttr(['vx','vy'],'Gaussian_Jerome')
+    p.SetAttr(['vz'],'Levy', x=np.linspace(0.001,10,1000), c=2, mu=0)
 
     vpara = 1e4
-    vperp = 1e5
+    vperp = 1e3
     p.ScaleAttr(['vx','vz'],vperp)
     p.ScaleAttr('vy',vpara)
+    
 
     # Write particle distribution in netcdf file
-    p.WriteParticleFile(particleFile)
+    p.WriteParticleFile(particleFile1)
 
 
 
     # Rotate velocities parallel to mesh element normals
-    nP,x,y,z,vx,vy,vz = loadNC(particleFile)
+    nP,x,y,z,vx,vy,vz = loadNC(particleFile1)
     v = np.vstack((vx,vy,vz)).T
 
     norm = np.vstack((_a,_b,_c)).T  # length number of particles
@@ -153,6 +174,8 @@ def makeParticleSource(data,geomFile,particleFile):
             # plt.show()
 
     # Save data in netcdf format
+    os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_temp.nc")
+    
     rootgrp = netCDF4.Dataset(particleFile, "w", format="NETCDF4")
     npp = rootgrp.createDimension("nP", nP)
     xxx = rootgrp.createVariable("x","f8",("nP"))

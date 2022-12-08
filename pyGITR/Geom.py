@@ -248,6 +248,16 @@ class GeomPlot(GeomGroup):
         mn = min([xmin, ymin, zmin])
         mx = max([xmax, ymax, zmax])
         self.SetAxisLim(mn, mx)
+        
+    def Plot_output(self, GroupID=None, ax=None, fig=None, **kwargs):
+        if fig is None:
+            self.fig = plt.figure()
+        if ax is None:
+            self.ax = self.fig.add_subplot(111, projection='3d')
+        else:
+            self.ax = ax
+        self.PlotTriangles(GroupID, ax, **kwargs)
+        
 
     def ShowCentroids(self, ax=None):
         if ax is None:

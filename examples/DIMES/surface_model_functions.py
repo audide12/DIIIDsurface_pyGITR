@@ -13,6 +13,7 @@ Delta_t_gitr = 1e-7
 Delta_implant = 1e-5 # enter parameter value and units
 amu_C = 12 #for carbon
 amu_W = 184 #for tungsten
+amu_Si = 28 #for silicon
 
 n_atom = 6e22 # average number density
 weight_gitr = Delta_t/Delta_t_gitr
@@ -26,6 +27,10 @@ Sputtering_yield_C_to_W = 0.5  # 0.5 treated almost constant
 
 Reflection_yield_C_to_C = 0.005    # max 0.005 min 0.001  steady-state :  0.9
 Reflection_yield_C_to_W = 0.75  # max 0.95 min 0.67    steady-state :  0.005
+
+Sputtering_yield_H_to_SiC = 0.9459 # average from Eckstein data
+Sputtering_yield_C_to_SiC = 0.5 * Sputtering_yield_C_to_C # approximation
+Sputtering_yield_H_to_Si = 0.01 # average value from the sputtering plots
 
 N_GITR = 10000 # number of GITR particles
 
@@ -72,15 +77,16 @@ def makeInitNC(dim,area,Conc):
     initial_token_flux = 1.0e19  # tunable parameter
 
     Flux_proportionality = {}
-    for Z in Conc.keys():
-        Flux_proportionality[Z] = 0
-        for k in range(dim):
-            Flux_proportionality[Z] += initial_token_flux*area[k]*Delta_t_gitr/N_GITR
+    Total_Area = 0
+    for k in range(dim):
+        Total_Area += area[k]
+    for Z in Conc.keys(): 
+        Flux_proportionality[Z] = initial_token_flux*Total_Area*Delta_t_gitr/N_GITR
 
     Surface_time = np.full((1,1),0.0)
     Surface_number = np.array(range(dim))
 
-    ncFile = netCDF4.Dataset('surface_evolution_C_W.nc', 'w', format='NETCDF4')
+    ncFile = netCDF4.Dataset('surface_evolution_C_Si.nc', 'w', format='NETCDF4')
     s_number_dim = ncFile.createDimension('surface_dim', dim) # surface number dimension
     s_time_dim = ncFile.createDimension('time_dim', len(Surface_time)) # time dimension
 
@@ -100,4 +106,4 @@ def makeInitNC(dim,area,Conc):
         flux_proportionality[Z][:] = Flux_proportionality[Z]
 
     ncFile.close()
-    os.system("mv surface_evolution_C_W.nc /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/")
+    os.system("mv surface_evolution_C_Si.nc /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/")
