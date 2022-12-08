@@ -336,6 +336,10 @@ p_W.WriteParticleFile('particleConf_W.nc')
 #%%
 
 # Estimating the total time evolution for the surface model
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
 
 last_entry_C = np.reshape(C_C[:,-1],(len(x1),1))
 last_entry_W = np.reshape(C_W[:,-1],(len(x1),1))
@@ -369,6 +373,44 @@ for surface_index in range(len(x1)):
 RHS_C = Gamma_C_net - Gamma_C_bulk
 RHS_W = Gamma_W_net - Gamma_W_bulk
 
+<<<<<<< HEAD
+=======
+=======
+
+last_entry_C = np.reshape(C_C[:,-1],(len(x1),1))
+last_entry_W = np.reshape(C_W[:,-1],(len(x1),1))
+
+Gamma_W_ero = last_entry_W*chi_W_ero
+Gamma_C_ero = last_entry_C*chi_C_ero_1 + last_entry_W*chi_C_ero_2
+Gamma_C_dep = last_entry_C*chi_C_dep_1 + last_entry_W*chi_C_dep_2 + Gamma_C_redep 
+Gamma_W_dep = Gamma_W_redep
+
+Gamma_C_net = Gamma_C_dep - Gamma_C_ero
+
+Gamma_W_net = -Gamma_W_ero
+
+Gamma_C_bulk = np.zeros((len(x1),1))
+Gamma_W_bulk = np.zeros((len(x1),1))
+
+#print(Gamma_C_net)
+
+for surface_index in range(len(x1)):
+    if (Gamma_C_net[surface_index] + Gamma_W_net[surface_index]) > 0: # deposition regime
+        #print("deposition")
+        Gamma_C_bulk[surface_index] = last_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+        Gamma_W_bulk[surface_index] = last_entry_W[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+    
+    else:  #  erosion regime
+        #print("erosion")
+        Gamma_C_bulk[surface_index] = 0
+        Gamma_W_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+
+
+RHS_C = Gamma_C_net - Gamma_C_bulk
+RHS_W = Gamma_W_net - Gamma_W_bulk
+
+>>>>>>> 72472f7 (added stuff)
+>>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
 Stopping_criteria = 0.1 # for C_C and C_W
         
 Delta_t_surface_estimate_C = (Delta_implant*n_atom*Stopping_criteria)/RHS_C

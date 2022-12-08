@@ -486,6 +486,10 @@ for surface_index in range(len(x1)):
         #print("erosion")
         Gamma_C_bulk[surface_index] = 0
         Gamma_W_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
 
 
 RHS_C = Gamma_C_net - Gamma_C_bulk
@@ -500,6 +504,25 @@ Delta_t_surface_estimate_W = (Delta_implant*n_atom*Stopping_criteria)/RHS_W
 Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surface_estimate_C))        
 
 
+<<<<<<< HEAD
+=======
+=======
+
+
+RHS_C = Gamma_C_net - Gamma_C_bulk
+RHS_W = Gamma_W_net - Gamma_W_bulk
+
+Stopping_criteria = 0.1 # for C_C and C_W
+        
+Delta_t_surface_estimate_C = (Delta_implant*n_atom*Stopping_criteria)/RHS_C
+
+Delta_t_surface_estimate_W = (Delta_implant*n_atom*Stopping_criteria)/RHS_W
+
+Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surface_estimate_C))        
+
+
+>>>>>>> 72472f7 (added stuff)
+>>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
 #%%
 # The actual surface model differential equation
 # Evolution of C_C and C_W
