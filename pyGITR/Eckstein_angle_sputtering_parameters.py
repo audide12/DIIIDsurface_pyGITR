@@ -6,6 +6,8 @@ Created on Tue Dec  6 19:14:41 2022
 @author: de
 """
 
+import numpy as np
+
 # Creating a dictionary for the rotation parameters
 
 List_Paramters = ['E0','f','b','c','Theta0_star']

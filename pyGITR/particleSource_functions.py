@@ -213,4 +213,3 @@ def checkRotation(surface_x,surface_y,surface_z,xr,yr,zr,a,b,c,inDir):
 
 
 
-
