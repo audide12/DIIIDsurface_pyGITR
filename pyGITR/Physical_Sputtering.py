@@ -1,5 +1,5 @@
 import numpy as np
-#from pyGITR.math_helper import *
+from pyGITR.math_helper import *
 from typing import Callable
 import matplotlib.pyplot as plt
 import pydoc
@@ -276,7 +276,9 @@ class Sputtering_and_reflection():
         
         Y = self.q_parameter*Nuclear_stopping*Numerator**self.mu_parameter/(self.lambda_parameter + Numerator**self.mu_parameter)
         
-        Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
+        
+        if Incident_Theta != 0:    
+            Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
         
         return Y
     

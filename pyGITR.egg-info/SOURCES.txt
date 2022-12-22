@@ -1,5 +1,6 @@
 README.md
 setup.py
+pyGITR/Eckstein_angle_sputtering_parameters.py
 pyGITR/Geom.py
 pyGITR/Input.py
 pyGITR/Particles.py
