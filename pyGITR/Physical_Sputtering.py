@@ -276,7 +276,7 @@ class Sputtering_and_reflection():
         
         Y = self.q_parameter*Nuclear_stopping*Numerator**self.mu_parameter/(self.lambda_parameter + Numerator**self.mu_parameter)
         
-        Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
+        #Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
         
         return Y
     

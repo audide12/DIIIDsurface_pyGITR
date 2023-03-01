@@ -49,15 +49,15 @@ zBox = zDiMES
 # dyBox = rDiMES*8.5
 # dzBox = rDiMES*8.5
 
-#<<<<<<< HEAD
+
 dxBox = rDiMES*3
 dyBox = rDiMES*3
 dzBox = rDiMES*3
-#=======
+
 dxBox = rDiMES*10
 dyBox = rDiMES*10
 dzBox = rDiMES*10
-#>>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 # Define metal rings
 dxBlock = 0.05

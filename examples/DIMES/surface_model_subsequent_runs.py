@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -9,16 +8,16 @@ Created on Mon Sep 26 13:55:59 2022
 """
 
 
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 #%%
 # Reading position files of Carbon
 
-<<<<<<< HEAD
+
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/output_C_15/positions.nc'
-=======
+
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_C/positions.nc'
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 PositionData = netCDF4.Dataset(FileNameHistory)
 
 surfacehit_C = np.array(PositionData['surfaceHit'])
@@ -40,7 +39,7 @@ print(count_C,"have hit a mesh element (not necessarily a surface)")
 
 # Reading position files of Tungsten
 
-<<<<<<< HEAD
+
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/output_Si_15/positions.nc'
 PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
 
@@ -59,7 +58,7 @@ for i in surfacehit_Si:
 print(count_Si,"have hit a mesh element (not necessarily a surface)")
 
 
-=======
+
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_W/positions.nc'
 PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
 
@@ -98,24 +97,24 @@ Zs = np.unique(Zs)
 print(Zs,"make up the", len(Surfaces),"surface mesh elements")
 # print(Surfaces)
 
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 
 #%%
 
 #Reading the surface features from the surface evolution netcdf file
-<<<<<<< HEAD
+
 FileNameSurfaceConcentration='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/surface_evolution_C_Si_old.nc'
 SurfaceConcentrationData = Dataset(FileNameSurfaceConcentration, "r", format="NETCDF4")
 
 # Record concentrations of all surface elements and their initial Z
-=======
+
 FileNameSurfaceConcentration='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/surface_evolution_C_W.nc'
 SurfaceConcentrationData = Dataset(FileNameSurfaceConcentration, "r", format="NETCDF4")
 
 # Record concentrations of all surface elements and their initial Z
 Concentration = {}
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 Flux_proportionality = {}
 for z in Zs:
     Concentration[z] = SurfaceConcentrationData['surface_concentration_{}'.format(z)][:,:]
@@ -128,26 +127,26 @@ counter = len(Surface_time)
 # Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITRb particle
 
 Gamma_C_redep = np.zeros((len(Surfaces),1))
-<<<<<<< HEAD
+
 Y_CSiC_Gamma_C_redep = np.zeros((len(Surfaces),1))
-=======
+
 Y_CW_Gamma_C_redep = np.zeros((len(Surfaces),1))
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 Y_CC_Gamma_C_redep = np.zeros((len(Surfaces),1))
 
 
 for i in range(len(Energy_particles_C)):
     if surfacehit_C[i] != -1:
-<<<<<<< HEAD
+
         #print(surfacehit_C[i])
-=======
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
+
         surface_index = int(surfacehit_C[i])
         sr_object = Sputtering_and_reflection()
 
         for j in Surfaces:
             if j == surface_index:
-<<<<<<< HEAD
+
                 #print("yes")
                 Flux_C_local = Flux_proportionality[6][-1]/(Delta_t_gitr*area[surface_index])
                 #print(Flux_C_local)
@@ -164,7 +163,7 @@ Y_SiSiC_Gamma_Si_redep = np.zeros((len(Surfaces),1))
 for i in range(len(Energy_particles_Si)):
     if surfacehit_Si[i] != -1:
         surface_index = int(surfacehit_Si[i])
-=======
+
                 Flux_C_local = Flux_proportionality[6][-1]/(Delta_t_gitr*area[surface_index])
                 
                 Gamma_C_redep[surface_index] = Gamma_C_redep[surface_index] + Flux_C_local  # check this
@@ -179,12 +178,12 @@ Y_WC_Gamma_W_redep = np.zeros((len(Surfaces),1))
 for i in range(len(Energy_particles_W)):
     if surfacehit_W[i] != -1:
         surface_index = int(surfacehit_W[i])
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
         sr_object = Sputtering_and_reflection()
         
         for j in Surfaces:
             if j == surface_index:
-<<<<<<< HEAD
+
                 Flux_Si_local = Flux_proportionality[14][-1]/(Delta_t_gitr*area[surface_index])
                 
                 Gamma_Si_redep[surface_index] = Gamma_Si_redep[surface_index] + Flux_Si_local  # check this
@@ -221,7 +220,7 @@ Gamma_C_dep_global = Gamma_C_redep + np.reshape(Concentration[14][:,-1],(len(Sur
 
 Gamma_Si_dep_global = Gamma_Si_redep
 
-=======
+
                 Flux_W_local = Flux_proportionality[74][-1]/(Delta_t_gitr*area[surface_index])
                 
                 Gamma_W_redep[surface_index] = Gamma_W_redep[surface_index] + Flux_W_local  # check this
@@ -243,14 +242,14 @@ Gamma_C_ero_global = np.reshape(Concentration[6][:,-1],(len(Surfaces),1)) * chi_
 Gamma_C_dep_global = np.reshape(Concentration[6][:,-1],(len(Surfaces),1)) * chi_C_dep_1 + np.reshape(Concentration[74][:,-1],(len(Surfaces),1)) * chi_C_dep_2 + Gamma_C_redep
 Gamma_W_ero_global = np.reshape(Concentration[74][:,-1],(len(Surfaces),1)) * chi_W_ero
 Gamma_W_dep_global = Gamma_W_redep
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 #%%
 
 # The following arrays will keep track of entries to be made in the next GITR run. 
 
 nP_C_global = 0 #tracks total number of eroded particles
-<<<<<<< HEAD
+
 nP_Si_global = 0 #tracks total number of eroded particles
 
 prop_Si = 0
@@ -262,7 +261,7 @@ for surface_index in range(len(Surfaces)):
     prop_C = prop_C + Gamma_C_ero_global[surface_index]*area[surface_index]*Delta_t_gitr
 
 prop_Si = prop_Si/N_GITR
-=======
+
 nP_W_global = 0 #tracks total number of eroded particles
 
 prop_W = 0
@@ -273,13 +272,13 @@ for surface_index in range(len(Surfaces)):
     prop_C = prop_C + Gamma_C_ero_global[surface_index]*area[surface_index]*Delta_t_gitr
 
 prop_W = prop_W/N_GITR
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 prop_C = prop_C/N_GITR
 
 
 particleSourceDict_C = {}
 for i,surface in enumerate(Surfaces):
-<<<<<<< HEAD
+
     num_particles = np.array(Gamma_C_ero_global[i]*Delta_t_gitr*area[surface]/prop_C).item()
     if num_particles!=0: 
         print("Surface:",surface,"C particles:",num_particles)
@@ -300,7 +299,7 @@ makeParticleSource(particleSourceDict_C, "/Users/de/Research/DIIIDsurface_pyGITR
 if nP_Si_global>0:
     
     makeParticleSource(particleSourceDict_Si, "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/gitrGeom.cfg", "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_Si.nc")
-=======
+
     if Z[i] == 6:
         num_particles = np.array(Gamma_C_ero_global[i]*Delta_t_gitr*area[surface]/prop_C).item()
         if num_particles!=0: 
@@ -317,7 +316,7 @@ for i,surface in enumerate(Surfaces):
 
 makeParticleSource(particleSourceDict_C, "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/gitrGeom.cfg", "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_C.nc")
 #makeParticleSource(particleSourceDict_W, "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/gitrGeom.cfg", "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_W.nc")
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 
 #%%
@@ -325,7 +324,7 @@ makeParticleSource(particleSourceDict_C, "/Users/de/Research/DIIIDsurface_pyGITR
 # Estimating the total time evolution for the surface model
 
 last_entry_C = np.reshape(Concentration[6][:,-1],(len(Surfaces),1))
-<<<<<<< HEAD
+
 last_entry_Si = np.reshape(Concentration[14][:,-1],(len(Surfaces),1))
 last_entry_SiC = np.reshape(Concentration[20][:,-1],(len(Surfaces),1))
 
@@ -340,7 +339,7 @@ Gamma_SiC_net = (-1)*Gamma_SiC_ero_global
 Gamma_C_bulk = np.zeros((len(Surfaces),1))
 Gamma_Si_bulk = np.zeros((len(Surfaces),1))
 Gamma_SiC_bulk = np.zeros((len(Surfaces),1))
-=======
+
 last_entry_W = np.reshape(Concentration[74][:,-1],(len(Surfaces),1))
 
 Gamma_W_ero = last_entry_W*chi_W_ero
@@ -354,12 +353,12 @@ Gamma_W_net = -Gamma_W_ero
 
 Gamma_C_bulk = np.zeros((len(Surfaces),1))
 Gamma_W_bulk = np.zeros((len(Surfaces),1))
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 #print(Gamma_C_net)
 
 for surface_index in range(len(Surfaces)):
-<<<<<<< HEAD
+
     if (Gamma_C_net[surface_index] + Gamma_Si_net[surface_index] + Gamma_SiC_net[surface_index]) > 0: # deposition regime
         print("deposition")
         Gamma_C_bulk[surface_index] = last_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
@@ -390,7 +389,7 @@ Delta_t_surface_estimate_Si = (Delta_implant*n_atom*Stopping_criteria)/RHS_Si
 Delta_t_surface_estimate_SiC = (Delta_implant*n_atom*Stopping_criteria)/RHS_SiC
 
 Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surface_estimate_Si),np.amin(Delta_t_surface_estimate_SiC))        
-=======
+
     if (Gamma_C_net[surface_index] + Gamma_W_net[surface_index]) > 0: # deposition regime
         #print("deposition")
         Gamma_C_bulk[surface_index] = last_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
@@ -412,7 +411,7 @@ Delta_t_surface_estimate_C = (Delta_implant*n_atom*Stopping_criteria)/RHS_C
 Delta_t_surface_estimate_W = (Delta_implant*n_atom*Stopping_criteria)/RHS_W
 
 Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surface_estimate_C))        
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 
 #%%
@@ -425,19 +424,19 @@ Time = Delta_t_surface
 Time_steps = 1e4
 Delta_Time = Delta_t/Time_steps
 Delta_t_Stopping = 0
-<<<<<<< HEAD
+
 Stopping_criteria = 0.2 # for C_C and C_W
 
 new_entry_C = np.reshape(Concentration[6][:,-1],(len(Surfaces),1))
 new_entry_Si = np.reshape(Concentration[14][:,-1],(len(Surfaces),1))
 new_entry_SiC = np.reshape(Concentration[20][:,-1],(len(Surfaces),1))
 
-=======
+
 Stopping_criteria = 0.1 # for C_C and C_W
 
 new_entry_C = np.reshape(Concentration[6][:,-1],(len(Surfaces),1))
 new_entry_W = np.reshape(Concentration[74][:,-1],(len(Surfaces),1))
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 #new_entry_C = np.zeros(len(x1))
 
 #new_entry_C[:] =  old_C[:] + Delta_Time*(Gamma_C_net_global[:] - old_C[:]*Gamma_C_bulk_global[:])/(Delta_implant*n_atom)
@@ -445,7 +444,7 @@ new_entry_W = np.reshape(Concentration[74][:,-1],(len(Surfaces),1))
         
 for t in range(1,int(Time_steps)):
     
-<<<<<<< HEAD
+
     
     Gamma_SiC_ero = beta_SiC * new_entry_SiC
     Gamma_Si_ero = Gamma_SiC_ero + beta_eroSi1*new_entry_Si + beta_eroSi2*new_entry_Si
@@ -468,7 +467,7 @@ for t in range(1,int(Time_steps)):
     Gamma_C_bulk = np.zeros((len(Surfaces),1))
     Gamma_Si_bulk = np.zeros((len(Surfaces),1))
     Gamma_SiC_bulk = np.zeros((len(Surfaces),1))
-=======
+
     Gamma_W_ero = new_entry_W*chi_W_ero
     
     Gamma_C_ero = new_entry_C*chi_C_ero_1 + new_entry_W*chi_C_ero_2
@@ -485,12 +484,12 @@ for t in range(1,int(Time_steps)):
     
     Gamma_C_bulk = np.zeros((len(Surfaces),1))
     Gamma_W_bulk = np.zeros((len(Surfaces),1))
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
     
     #print(Gamma_C_net)
     
     for surface_index in range(len(Surfaces)):
-<<<<<<< HEAD
+
         if (Gamma_C_net[surface_index] + Gamma_Si_net[surface_index] + Gamma_SiC_net[surface_index]) > 0: # deposition regime
             #print("deposition")
             Gamma_C_bulk[surface_index] = last_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
@@ -506,7 +505,7 @@ for t in range(1,int(Time_steps)):
 
     
     
-=======
+
         if (Gamma_C_net[surface_index] + Gamma_W_net[surface_index]) > 0: # deposition regime
             #print("deposition")
             Gamma_C_bulk[surface_index] = new_entry_C[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
@@ -516,12 +515,12 @@ for t in range(1,int(Time_steps)):
             #print("erosion")
             Gamma_C_bulk[surface_index] = 0
             Gamma_W_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_W_net[surface_index])
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
     
     #print(t)
     new_entry_C = new_entry_C + Delta_Time*(Gamma_C_net - Gamma_C_bulk)/(Delta_implant*n_atom)
     
-<<<<<<< HEAD
+
     new_entry_Si = new_entry_Si + Delta_Time*(Gamma_Si_net - Gamma_Si_bulk)/(Delta_implant*n_atom)
     
     new_entry_SiC = new_entry_SiC + Delta_Time*(Gamma_SiC_net - Gamma_SiC_bulk)/(Delta_implant*n_atom)
@@ -544,7 +543,7 @@ Concentration[20] = np.concatenate((Concentration[20],new_entry_SiC),axis=1)
 Flux_proportionality[6] = np.append(Flux_proportionality[6],prop_C)
 Flux_proportionality[14] = np.append(Flux_proportionality[14],prop_Si)
 Flux_proportionality[20] = np.append(Flux_proportionality[20],prop_SiC)
-=======
+
     new_entry_W = new_entry_W + Delta_Time*(Gamma_W_net - Gamma_W_bulk)/(Delta_implant*n_atom)
     
     Delta_t_Stopping += Delta_Time
@@ -560,7 +559,7 @@ Concentration[74] = np.concatenate((Concentration[74],new_entry_W),axis=1)
 
 Flux_proportionality[6] = np.append(Flux_proportionality[6],(1/prop_C))
 Flux_proportionality[74] = np.append(Flux_proportionality[74],(1/prop_W))
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 
 Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t_Stopping)
 
@@ -568,15 +567,15 @@ Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t_Stopping)
 #%%
 #Writing the surface features with time
 
-<<<<<<< HEAD
+
 os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/surface_evolution_C_Si.nc")
 
 ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/surface_evolution_C_Si.nc', 'w', format='NETCDF4')
-=======
+
 os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/surface_evolution_C_W.nc")
 
 ncFile = netCDF4.Dataset('/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/surface_evolution_C_W.nc', 'w', format='NETCDF4')
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
+
 s_number_dim = ncFile.createDimension('surface_dim', len(Surfaces)) # surface number dimension
 s_time_dim = ncFile.createDimension('time_dim', len(Surface_time)) # time dimension
 
@@ -605,7 +604,7 @@ ncFile.close()
 #%%
 
     
-<<<<<<< HEAD
+
     
 runcell(1, '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/surface_model_subsequent_runs.py')
 runcell(2, '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/surface_model_subsequent_runs.py')
@@ -669,10 +668,3 @@ X_=np.linspace(x.min(), x.max(), 500)
 Y_=cubic_interploation_model(X_)
 
 
-
-
-    
-    
-=======
->>>>>>> 742051bb5c26808a9ff7ec7f08154e22d50ea9c2
-    
