@@ -7,8 +7,18 @@ Created on Mon Sep 26 13:55:59 2022
 @author: de
 """
 
+#%% Reading the weights of the launched particles
+
+FileNameWeights='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particle_weights_C.nc'
+Data = netCDF4.Dataset(FileNameWeights)
+p_C = np.array(Data['particle_number'])
+Weights_C = np.array(Data['particle_wt_C'])
 
 
+FileNameWeights='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particle_weights_Si.nc'
+Data = netCDF4.Dataset(FileNameWeights)
+p_Si = np.array(Data['particle_number'])
+Weights_Si = np.array(Data['particle_wt_Si'])
 
 #%%
 # Reading position files of Carbon
@@ -16,7 +26,6 @@ Created on Mon Sep 26 13:55:59 2022
 
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/output_C_15/positions.nc'
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_C/positions.nc'
 
 PositionData = netCDF4.Dataset(FileNameHistory)
 
@@ -30,6 +39,7 @@ Energy_particles_C = np.array(0.5*amu_C*1.66e-27*(surface_vx_C**2 + surface_vy_C
 count_C = 0
 
 for i in surfacehit_C:
+    
     if i != -1:
         count_C+=1
     
@@ -127,19 +137,13 @@ counter = len(Surface_time)
 # Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITRb particle
 
 Gamma_C_redep = np.zeros((len(Surfaces),1))
-
 Y_CSiC_Gamma_C_redep = np.zeros((len(Surfaces),1))
-
-Y_CW_Gamma_C_redep = np.zeros((len(Surfaces),1))
-
+Y_CSi_Gamma_C_redep = np.zeros((len(Surfaces),1)) # wasn't needed
 Y_CC_Gamma_C_redep = np.zeros((len(Surfaces),1))
 
 
 for i in range(len(Energy_particles_C)):
     if surfacehit_C[i] != -1:
-
-        #print(surfacehit_C[i])
-
 
         surface_index = int(surfacehit_C[i])
         sr_object = Sputtering_and_reflection()
@@ -148,7 +152,7 @@ for i in range(len(Energy_particles_C)):
             if j == surface_index:
 
                 #print("yes")
-                Flux_C_local = Flux_proportionality[6][-1]/(Delta_t_gitr*area[surface_index])
+                Flux_C_local = Weights_C[i]*Flux_proportionality[6][-1]/(Delta_t_gitr*area[surface_index])
                 #print(Flux_C_local)
                 
                 Gamma_C_redep[surface_index] = Gamma_C_redep[surface_index] + Flux_C_local  # check this
@@ -160,31 +164,17 @@ Gamma_Si_redep = np.zeros((len(Surfaces),1))
 Y_SiSi_Gamma_Si_redep = np.zeros((len(Surfaces),1))
 Y_SiSiC_Gamma_Si_redep = np.zeros((len(Surfaces),1))
         
-for i in range(len(Energy_particles_Si)):
-    if surfacehit_Si[i] != -1:
-        surface_index = int(surfacehit_Si[i])
-
-                Flux_C_local = Flux_proportionality[6][-1]/(Delta_t_gitr*area[surface_index])
-                
-                Gamma_C_redep[surface_index] = Gamma_C_redep[surface_index] + Flux_C_local  # check this
-                Y_CW_Gamma_C_redep[surface_index] = Y_CW_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','W',Energy_particles_C[i])*Flux_C_local
-                Y_CC_Gamma_C_redep[surface_index] = Y_CC_Gamma_C_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_particles_C[i])*Flux_C_local
-                
-
-Gamma_W_redep = np.zeros((len(Surfaces),1))
-Y_WW_Gamma_W_redep = np.zeros((len(Surfaces),1))
-Y_WC_Gamma_W_redep = np.zeros((len(Surfaces),1))
         
-for i in range(len(Energy_particles_W)):
+for i in range(len(Energy_particles_Si)):
     if surfacehit_W[i] != -1:
-        surface_index = int(surfacehit_W[i])
+        surface_index = int(surfacehit_Si[i])
 
         sr_object = Sputtering_and_reflection()
         
         for j in Surfaces:
             if j == surface_index:
 
-                Flux_Si_local = Flux_proportionality[14][-1]/(Delta_t_gitr*area[surface_index])
+                Flux_Si_local = Weights_Si[i]*Flux_proportionality[14][-1]/(Delta_t_gitr*area[surface_index])
                 
                 Gamma_Si_redep[surface_index] = Gamma_Si_redep[surface_index] + Flux_Si_local  # check this
                 Y_SiSi_Gamma_Si_redep[surface_index] = Y_SiSi_Gamma_Si_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('Si','Si',Energy_particles_Si[i])*Flux_Si_local
@@ -208,40 +198,11 @@ Gamma_SiC_ero_global = np.reshape(Concentration[20][:,-1],(len(Surfaces),1))*bet
 #print(sum(Gamma_SiC_ero_global))
 
 Gamma_Si_ero_global = Gamma_SiC_ero_global + np.reshape(Concentration[14][:,-1],(len(Surfaces),1))*beta_SiC1 + np.reshape(Concentration[14][:,-1],(len(Surfaces),1))*Y_SiSi_Gamma_Si_redep
-
 Gamma_Si_ero_exclusive = np.reshape(Concentration[14][:,-1],(len(Surfaces),1))*beta_SiC1 + np.reshape(Concentration[14][:,-1],(len(Surfaces),1))*Y_SiSi_Gamma_Si_redep
-
-
 Gamma_C_ero_global = Gamma_SiC_ero_global + np.reshape(Concentration[6][:,-1],(len(Surfaces),1))*(beta_eroC1 + beta_eroC2 + Y_CC_Gamma_C_redep)
-
 Gamma_C_ero_exclusive = np.reshape(Concentration[6][:,-1],(len(Surfaces),1))*(beta_eroC1 + beta_eroC2 + Y_CC_Gamma_C_redep)
-
 Gamma_C_dep_global = Gamma_C_redep + np.reshape(Concentration[14][:,-1],(len(Surfaces),1))*Flux_C + np.reshape(Concentration[6][:,-1],(len(Surfaces),1))*beta_C_dep +  np.reshape(Concentration[20][:,-1],(len(Surfaces),1))*beta_C_dep     
-
 Gamma_Si_dep_global = Gamma_Si_redep
-
-
-                Flux_W_local = Flux_proportionality[74][-1]/(Delta_t_gitr*area[surface_index])
-                
-                Gamma_W_redep[surface_index] = Gamma_W_redep[surface_index] + Flux_W_local  # check this
-                Y_WW_Gamma_W_redep[surface_index] = Y_WW_Gamma_W_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','W',Energy_particles_W[i])*Flux_W_local
-                Y_WC_Gamma_W_redep[surface_index] = Y_WC_Gamma_W_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('W','C',Energy_particles_W[i])*Flux_W_local
-                
-
-        
-        
-chi_W_ero =  Y_WW_Gamma_W_redep + Y_CW_Gamma_C_redep + Sputtering_yield_H_to_W*Flux_H + Sputtering_yield_C_to_W*Flux_C    
-
-chi_C_ero_1 =  Y_CC_Gamma_C_redep + Sputtering_yield_H_to_C*Flux_H + Sputtering_yield_C_to_C*Flux_C   
-chi_C_ero_2 =  Y_WC_Gamma_W_redep
-
-chi_C_dep_1 = np.zeros((len(Surfaces),1)) + (1-Reflection_yield_C_to_C)*Flux_C
-chi_C_dep_2 = np.zeros((len(Surfaces),1)) + (1-Reflection_yield_C_to_W)*Flux_C
-   
-Gamma_C_ero_global = np.reshape(Concentration[6][:,-1],(len(Surfaces),1)) * chi_C_ero_1 + np.reshape(Concentration[74][:,-1],(len(Surfaces),1)) * chi_C_ero_2
-Gamma_C_dep_global = np.reshape(Concentration[6][:,-1],(len(Surfaces),1)) * chi_C_dep_1 + np.reshape(Concentration[74][:,-1],(len(Surfaces),1)) * chi_C_dep_2 + Gamma_C_redep
-Gamma_W_ero_global = np.reshape(Concentration[74][:,-1],(len(Surfaces),1)) * chi_W_ero
-Gamma_W_dep_global = Gamma_W_redep
 
 
 #%%
@@ -249,7 +210,6 @@ Gamma_W_dep_global = Gamma_W_redep
 # The following arrays will keep track of entries to be made in the next GITR run. 
 
 nP_C_global = 0 #tracks total number of eroded particles
-
 nP_Si_global = 0 #tracks total number of eroded particles
 
 prop_Si = 0
@@ -272,7 +232,6 @@ for surface_index in range(len(Surfaces)):
     prop_C = prop_C + Gamma_C_ero_global[surface_index]*area[surface_index]*Delta_t_gitr
 
 prop_W = prop_W/N_GITR
-
 prop_C = prop_C/N_GITR
 
 

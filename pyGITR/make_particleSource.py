@@ -11,7 +11,7 @@ need to more velocity rotations into the surface loop
 from pyGITR.particleSource_functions import *
 import os
 
-def makeParticleSource(data,geomFile,particleFile):
+def makeParticleSource(data,geomFile,particleFile,particleWeightFile):
     x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surface,indir = loadCFG(geomFile=geomFile)
     
     
@@ -78,13 +78,22 @@ def makeParticleSource(data,geomFile,particleFile):
     
     
     p.SetAttr(['vx','vy'],'Gaussian_Jerome')
-    p.SetAttr(['vz'],'Levy', x=np.linspace(0.001,10,1000), c=2, mu=0)
+    
+    #p.SetAttr(['vz'],'Levy', x=np.linspace(0.001,10,1000), c=2, mu=0)   # without importance sampling
 
+    p.SetAttr(['vz'],'Gaussian') # with the correct importance interval
+    p.SetAttr(['vz'],'Levy', x=np.linspace(0.001,10,1000), c=2, mu=0)
+    
     vpara = 1e4
     vperp = 1e3
     p.ScaleAttr(['vx','vz'],vperp)
     p.ScaleAttr('vy',vpara)
     
+    w = np.zeros(nP)
+    for i in range(len(w)):
+        w[i] = p['weight'][i]/p['vz'][i]
+    p.SetAttr(['weight'],w)
+
 
     # Write particle distribution in netcdf file
     p.WriteParticleFile(particleFile1)
@@ -174,6 +183,16 @@ def makeParticleSource(data,geomFile,particleFile):
             # plt.show()
 
     # Save data in netcdf format
+    
+    ncFile = netCDF4.Dataset(particleWeightFile, "w", format="NETCDF4")
+    particle_dim = ncFile.createDimension('particle_dim', nP) # number of particles
+    p_number = ncFile.createVariable('particle_number',np.float64,('particle_dim'))
+    p_weight = ncFile.createVariable('particle_wt',np.float64,('particle_dim'))
+    p_number[:] = p_number
+    p_weight[:] = p_weight
+    ncFile.close()
+        
+    
     os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_temp.nc")
     
     rootgrp = netCDF4.Dataset(particleFile, "w", format="NETCDF4")

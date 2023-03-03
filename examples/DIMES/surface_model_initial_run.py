@@ -167,7 +167,7 @@ Surface_time = SurfaceConcentrationData['time'][:]
 Surface_number = SurfaceConcentrationData['surface_number'][:]
 counter = len(Surface_time)
 #%%
-# Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITRb particle
+# Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITR particle
 
 Gamma_C_redep = np.zeros((len(Surfaces),1))
 
@@ -297,18 +297,17 @@ nP_Si_global = 0 #tracks total number of eroded particles
 
 prop_Si = 0
 prop_C = 0
+prop_W = 0
 prop_SiC = 1
 
 for surface_index in range(len(Surfaces)):
     prop_Si = prop_Si + Gamma_Si_ero_global[surface_index]*area[surface_index]*Delta_t_gitr
-    prop_C = prop_C + Gamma_C_ero_global[surface_index]*area[surface_index]*Delta_t_gitr
+
 
 prop_Si = prop_Si/N_GITR
 
 nP_W_global = 0 #tracks total number of eroded particles
 
-prop_W = 0
-prop_C = 0
 
 for surface_index in range(len(Surfaces)):
     prop_W = prop_W + Gamma_W_ero_global[surface_index]*area[surface_index]*Delta_t_gitr
