@@ -77,23 +77,6 @@ for i in surfacehit_Si:
         count_Si+=1
 print(count_Si,"have hit a mesh element (not necessarily a surface)")
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_W/positions.nc'
-PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
-
-surfacehit_W = np.array(PositionData['surfaceHit'])
-surface_vx_W = np.array(PositionData['vx'])
-surface_vy_W = np.array(PositionData['vy'])
-surface_vz_W = np.array(PositionData['vz'])
-
-
-Energy_particles_W = np.array(0.5*amu_W*1.66e-27*(surface_vx_W**2 + surface_vy_W**2 + surface_vz_W**2)/1.602e-19) # make sure that this energy is in eV
-
-count_W = 0
-for i in surfacehit_W:
-    if i != -1:
-        count_W+=1
-print(count_W,"have hit a mesh element (not necessarily a surface)")
-
 
 
 #%%
@@ -184,7 +167,7 @@ for i in range(len(Energy_particles_C)):
             if j == surface_index:
 
                 #print("yes")
-                Flux_C_local = Weights_C[i]*Flux_proportionality[6][-1]/(Delta_t_gitr*area[surface_index])
+                Flux_C_local = Flux_proportionality[6][-1]/(Delta_t_gitr*area[surface_index])  # we start with initial weight 1 (uniform)
                 #print(Flux_C_local)
                 
                 Gamma_C_redep[surface_index] = Gamma_C_redep[surface_index] + Flux_C_local  # check this
@@ -206,7 +189,7 @@ for i in range(len(Energy_particles_Si)):
         for j in Surfaces:
             if j == surface_index:
 
-                Flux_Si_local = Weights_Si[i]*Flux_proportionality[14][-1]/(Delta_t_gitr*area[surface_index])
+                Flux_Si_local = Flux_proportionality[14][-1]/(Delta_t_gitr*area[surface_index]) # we start with initial weight 1 (uniform)
                 
                 Gamma_Si_redep[surface_index] = Gamma_Si_redep[surface_index] + Flux_Si_local  # check this
                 Y_SiSi_Gamma_Si_redep[surface_index] = Y_SiSi_Gamma_Si_redep[surface_index] + sr_object.Calculate_PhysicalSputteringParameters('Si','Si',Energy_particles_Si[i])*Flux_Si_local

@@ -68,25 +68,6 @@ for i in surfacehit_Si:
 print(count_Si,"have hit a mesh element (not necessarily a surface)")
 
 
-
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/Workflow_setup/output_W/positions.nc'
-PositionData = Dataset(FileNameHistory, "r", format="NETCDF4")
-
-surfacehit_W = np.array(PositionData['surfaceHit'])
-surface_vx_W = np.array(PositionData['vx'])
-surface_vy_W = np.array(PositionData['vy'])
-surface_vz_W = np.array(PositionData['vz'])
-
-
-Energy_particles_W = np.array(0.5*amu_W*1.66e-27*(surface_vx_W**2 + surface_vy_W**2 + surface_vz_W**2)/1.602e-19) # make sure that this energy is in eV
-
-count_W = 0
-for i in surfacehit_W:
-    if i != -1:
-        count_W+=1
-print(count_W,"have hit a mesh element (not necessarily a surface)")
-
-
 #%%
 
 #Reading geometry files
