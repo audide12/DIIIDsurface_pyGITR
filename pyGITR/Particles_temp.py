@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar  7 15:03:20 2023
+
+@author: de
+"""
+
 # -*- coding: utf-8 -*-
 
 
@@ -19,27 +27,21 @@ class Distribs():
     #        f = f/Integrale(f, x, Array=False)
     #    return f
 
-    def Gaussian(x: np.ndarray = np.linspace(-15000, 15000, 100000), sigma: float = 10.0, mu: float = 120.0, beta: float = 1.0, Normalized=True):
-        f = np.exp(-((x-mu)/sigma)**2)
+    def Gaussian(x: np.ndarray = np.linspace(-15000, 15000, 100000), sigma: float = 1.0, mu: float = 0.0, beta: float = 0.0, Normalized=True):
+        f = beta*np.exp(-((x-mu)/sigma)**2)
         
         f[np.argwhere(x<0)] = 0
-        
         if Normalized:
             f = f/Integrale(f, x, Array=False)
         return f
 
-    def Gaussian_test(x: np.ndarray = np.linspace(-15000, 15000, 100000), sigma: float = 10.0, mu: float = 130, beta: float = 1.0, Normalized=True):
-        f = np.exp(-((x-mu)/sigma)**2)
-         
-        f[np.argwhere(x<0)] = 0
-         
-        if Normalized:
-            f = f/Integrale(f, x, Array=False)
-        return f
-
+    # def Maxwellian(x: np.ndarray, sigma: float = 1, mu: float = 0, beta: float = 0, Normalized=True):
+    #     f = np.abs(x)**beta*np.exp(-1.0/2.0*((x-mu)/sigma)**2)
+    #     if Normalized:
+    #         f = f/Integrale(f, x, Array=False)
+    #     return f
     
-    
-    def Gaussian_Jerome(x: np.ndarray = np.linspace(-15000, 15000, 100000), sigma: float = 10.0, mu: float = 125, beta: float = 0.0, Normalized=True):
+    def Gaussian_Jerome(x: np.ndarray = np.linspace(-10, 10, 10000), sigma: float = 1.0, mu: float = 0.0, beta: float = 0.0, Normalized=True):
         f = np.abs(x)**beta*np.exp(-1.0/2.0*((x-mu)/sigma)**2)
         if beta > 0:
             f[np.argwhere(x<0)] = 0
@@ -47,14 +49,6 @@ class Distribs():
             f = f/Integrale(f, x, Array=False)
         return f
     
-    # def Maxwellian(x: np.ndarray, sigma: float = 1, mu: float = 0, beta: float = 0, Normalized=True):
-    #     f = np.abs(x)**beta*np.exp(-1.0/2.0*((x-mu)/sigma)**2)
-    #     if Normalized:
-    #         f = f/Integrale(f, x, Array=False)
-    #     return f    
-    
-    
-
     def Thomson(x: np.ndarray = np.linspace(0, 300, 10000), xb: float = 8.64, xc: float = 100, Normalized=True):
         assert not (xc <= xb), "xc cannot be <= xb"
         f = x/(x + xb) ** 3*(1.0-np.sqrt((x+xb)/(xc+xb)))
@@ -88,7 +82,7 @@ class Distribs():
             f = f/Integrale(f, x, Array=False)
         return f
     
-    def Levy(x=np.linspace(0.1,10,10000), c=1, mu=0):
+    def Levy(x=np.linspace(0.001,10,10000), c=1, mu=0):
         return np.sqrt(c/2/np.pi)*np.exp(-c/(x-mu))/((x-mu)**1.5)
 
     @classmethod
@@ -112,48 +106,6 @@ class Distribs():
 
         return x, f(x,**kwargs)
     
-    @classmethod
-    def GetWeightedPdf(cls, f_q:str or Callable[np.array, np.ndarray], f_p:str or Callable[np.array, np.ndarray],mu:float = 5.0, sigma:float = 1.0, **kwargs) -> (np.ndarray,np.ndarray,np.ndarray):
-        
-        if type(f_q) == str:
-            if hasattr(cls, f_q):
-                f_q = getattr(cls,f_q)
-                if kwargs.get('x') is None:
-                    x = np.linspace(1, 200, 5005)   #specifically for vz
-                else:
-                    x = kwargs.pop('x')
-            else:
-                raise KeywordError('Cannot find the function "{}" in attributes.'.format(f_q))
-        else:
-            if kwargs.get('x') is None:
-                raise KeywordError('Must provide a vector of x values for the function f to get f(x)')
-            else:
-                x = kwargs.pop('x')
-                
-        if type(f_p) == str:
-            if hasattr(cls, f_p):
-                f_p = getattr(cls,f_p)
-
-            else:
-                raise KeywordError('Cannot find the function "{}" in attributes.'.format(f_p))
-            
-        # print(len(x))
-        # print(f_p(x,**kwargs))
-        # print(f_q(x,sigma,mu,**kwargs))
-        
-        # plt.figure()
-        # plt.plot(x,f_p(x,**kwargs))
-        # plt.title("p")
-        # plt.xlim(0,20)
-        # plt.show()
-        
-        # plt.figure()
-        # plt.plot(x,f_q(x,**kwargs))
-        # plt.title("q")
-        # plt.xlim(0,20)
-        # plt.show()
-
-        return x, f_q(x,**kwargs), f_p(x,**kwargs)
     
     
     
@@ -191,58 +143,12 @@ class Distribs():
         assert type(N) == int and N>0, "Nsamples must be an integer > 0. N={}".format(N)
         assert type(x) == np.ndarray and type(pdf) == np.ndarray, " x and pdf must be a numpy array"
         assert x.shape == pdf.shape, " x and pdf must have the same shape.:x.shape={}; pdf.shape={}".format(x.shape,pdf,shape)
-        
-        #print(len(x[np.searchsorted(Integrale(pdf, x, Normalized=True), np.random.rand(N), side='left')]))
+        #print(pdf.shape)
+        #print(N)
         return x[np.searchsorted(Integrale(pdf, x, Normalized=True), np.random.rand(N), side='left')]
     
     
-    def GenerateWeightedDistribution(x:np.ndarray ,pdf_q:np.ndarray ,pdf_p:np.ndarray , N:int=10000):
-        assert type(N) == int and N>0, "Nsamples must be an integer > 0. N={}".format(N)
-        assert type(x) == np.ndarray and type(pdf_p) == np.ndarray and type(pdf_q) == np.ndarray, " x and pdfs must be a numpy array"
-        assert x.shape == pdf_p.shape and x.shape == pdf_q.shape, " x and pdfs must have the same shape.:x.shape={}; pdf.shape={}".format(x.shape,pdf,shape)
-        #print(pdf.shape)
-        #print(N)
-        y = np.random.rand(N)
-        #sampled_x = x[np.searchsorted(Integrale(pdf_q, x, Normalized=True), y, side='left')]     
-        
-        sampled_x_actual = x[np.searchsorted(Integrale(pdf_p, x, Normalized=True), y, side='left')]  
-               
-        sampled_x_index = np.searchsorted(Integrale(pdf_q, x, Normalized=True), y, side='left')   
-        sampled_x = x[sampled_x_index]
-        denominator = pdf_q[sampled_x_index]
-        numerator = pdf_p[sampled_x_index]
-        weight = np.divide(numerator,denominator)
-        
-        pdf_p_over_q = np.divide(pdf_p,pdf_q)
-        
-        # print(x[np.searchsorted(Integrale(pdf_q, x, Normalized=True), y, side='left')] )
-        # print(sampled_x)
-        
-        # weight = pdf_p[sampled_x_index]/pdf_q[sampled_x_index]        
-       
-        # plt.figure()
-        # plt.plot(x,pdf_p)
-        # plt.title("p")
-        # plt.xlim(0,20)
-        # plt.show()
-       
-        # plt.figure()
-        # plt.plot(x,pdf_q)
-        # plt.title("q")
-        # plt.xlim(0,20)
-        # plt.show() 
 
-        print("--------=---------")
-        print(sampled_x_index[0])
-        
-        print("Sampled vz:    ", x[sampled_x_index[0]])
-        print("p:    ", pdf_p[sampled_x_index[0]])
-        print("q:    ", pdf_q[sampled_x_index[0]])
-        print("Weight:    ", pdf_p_over_q[sampled_x_index[0]])
-        print("Physics vz:    "  , sampled_x_actual[0])
-        print("weight x sampled vz:    " , pdf_p_over_q[sampled_x_index[0]]*x[sampled_x_index[0]])
-        
-        return sampled_x, weight, sampled_x_actual
 
 class ParticleDistribution():
 
@@ -304,15 +210,10 @@ class ParticleDistribution():
             else:
                 self.Particles[A] = self.Generate(self.Particles['Np'], f, **kwargs)
                 
-    def SetAttr_weighted(self, Attr: list or str, f_p: str, f_q: str, mu: float = 5, sigma: float = 1.0  , **kwargs):
-        if type(Attr) == str:
-            Attr = [Attr]
-            
-            
-        for A in Attr:
-            assert A in list(self.Particles.keys()), 'Cannot find "{}" among list of attributes available:{}'.format(A, list(self.Particles.keys()))
-            self.Particles[A],self.Particles['weights'], self.Particles['actual'] = self.Generate_Weighted(self.Particles['Np'], f_q, f_p ,mu, sigma, **kwargs)        
-                                
+                
+   
+                
+                
 
     def ScaleAttr(self,Attr, ScaleFactor):
         if type(Attr) == str:
@@ -369,36 +270,11 @@ class ParticleDistribution():
         
         return Distribs.GenerateDistribution( x, pdf, Np)
     
+
     
-    def Generate_Weighted(self, Np, q_DistribName, p_DistribName, mu, sigma, **kwargs):
-        """
-        Args:
-            Np (int, optional): Number fo samples. Defaults to 10000.
-            DistribName (TYPE): Probability distribution function.
 
-        Returns:
-            Distribution (np.ndarray): distribution
 
-        """
-        
-        x, pdf_q, pdf_p = Distribs.GetWeightedPdf(q_DistribName,p_DistribName,mu,sigma, **kwargs)
-        
-        # plt.figure()
-        # plt.plot(x,pdf_p)
-        # plt.title("p")
-        # plt.xlim(0,20)
-        # plt.show()
-       
-        # plt.figure()
-        # plt.plot(x,pdf_q)
-        # plt.title("q")
-        # plt.xlim(0,20)
-        # plt.show() 
-        
-        
-        sampled_x, weights, sampled_x_actual = Distribs.GenerateWeightedDistribution( x, pdf_q, pdf_p, Np)
-        
-        return sampled_x, weights, sampled_x_actual
+
 
     def CheckParticles(self):
         for k,v in self.Particles.items():

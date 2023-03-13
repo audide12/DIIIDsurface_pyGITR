@@ -82,7 +82,8 @@ def makeParticleSource(data,geomFile,particleFile,particleWeightFile):
     #p.SetAttr(['vz'],'Levy', x=np.linspace(0.001,10,1000), c=2, mu=0)   # without importance sampling
 
     p.SetAttr(['vz'],'Gaussian') # with the correct importance interval
-    p.SetAttr(['weight'],'Levy', x=np.linspace(0.001,10,1000), c=2, mu=0)
+    p.SetAttr(['weight_1'],'Levy', x=np.linspace(0.001,10,1000), c=2, mu=0)    
+    
     
     vpara = 1e4
     vperp = 1e3
@@ -91,7 +92,7 @@ def makeParticleSource(data,geomFile,particleFile,particleWeightFile):
     
     w = np.zeros(nP)
     for i in range(len(w)):
-        w[i] = p['weight'][i]/p['vz'][i]
+        w[i] = p['weight_1'][i]/p['vz'][i]
     p.SetAttr(['weight'],w)
 
 
