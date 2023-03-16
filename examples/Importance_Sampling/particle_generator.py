@@ -10,7 +10,7 @@ Created on Mon Mar  6 11:41:13 2023
 from pyGITR.particleSource_functions import *
 from pyGITR.Particles import *
 
-nP = 100000
+nP = 1000000
 
 p = ParticleDistribution()
 p.SetAttr('Np', nP)
@@ -21,57 +21,33 @@ mean = 2.0
 sigma = 0.1
 
 
-p.SetAttr_weighted(['vz'],'Gaussian','Gaussian_test')  # first is p and second as q
-
+p.SetAttr_weighted(['vz'],'Thomson','Gaussian')  # first is p and second as q
 p.SetAttr(['vx'],'Gaussian')
-
 ##  p is actual distribution and q is sampling distribution
 
-actual_distribution = p.Particles['actual']
-
-actual_distribution_1 = p.Particles['vx']
-
-
+q_distribution = p.Particles['vx'] # q distribution
 
 sampled_distribution = p.Particles['vz']
 weights = p.Particles['weights']
+weights = nP*weights/np.sum(weights)
 
+p_distribution = p.Particles['actual']      # p distribution
 
-multiplied = np.multiply(sampled_distribution,weights)
+#%%
 
 plt.figure()
-plt.hist(actual_distribution, bins=100, label="actual physics distribution")
-plt.hist(sampled_distribution, bins=100, label="sampling physics distribution",alpha=0.5)
-plt.title(label="Comparison of distributions")
-#plt.xlim(90,110)
+#plt.hist(sampled_distribution, bins=100, weights=np.ones(len(sampled_distribution)),label="sampled with weights --")
+plt.hist(sampled_distribution, bins=50, weights=weights,label="sampled with weights")
+#plt.hist(sampled_distribution, bins=100,label="sampled without weights")
+plt.hist(p_distribution,bins=50, label="physics",alpha=0.5)
 plt.legend()
 plt.show()
 
-
-
-
+#%%
 plt.figure()
-plt.hist(multiplied, bins=100, label="Sampling distribution multiplied by weights")
-# plt.hist(sampled_distribution, bins=100, label="sampling distribution")
-# plt.hist(weights, bins = 100, label = "weights")
-plt.title(label="Multiplied")
-# plt.xlim(0,10)
+plt.hist(q_distribution, bins=100,label="q distribution")
+#plt.hist(sampled_distribution, bins=50, weights=weights,label="sampled with weights")
+#plt.hist(sampled_distribution, bins=100,label="sampled without weights")
+#plt.hist(p_distribution,bins=50, label="physics",alpha=0.5)
 plt.legend()
 plt.show()
-
-
-
-# plt.figure()
-# plt.scatter(sampled_distribution,weights)
-# plt.xlabel("Sampled Distributions")
-# plt.ylabel("Weights")
-# plt.title(label="Sampled Distribution vs weights")
-# plt.show()
-
-
-
-#p.PlotAttr('vx')
-
-#p.WriteParticleFile(particleFile1)
-
-
