@@ -10,7 +10,7 @@ Created on Mon Mar  6 11:41:13 2023
 from pyGITR.particleSource_functions import *
 from pyGITR.Particles import *
 
-nP = 1000000
+nP = 100000
 
 p = ParticleDistribution()
 p.SetAttr('Np', nP)
@@ -29,17 +29,24 @@ q_distribution = p.Particles['vx'] # q distribution
 
 sampled_distribution = p.Particles['vz']
 weights = p.Particles['weights']
-weights = nP*weights/np.sum(weights)
 
 p_distribution = p.Particles['actual']      # p distribution
 
-#%%
 
 plt.figure()
-#plt.hist(sampled_distribution, bins=100, weights=np.ones(len(sampled_distribution)),label="sampled with weights --")
-plt.hist(sampled_distribution, bins=50, weights=weights,label="sampled with weights")
-#plt.hist(sampled_distribution, bins=100,label="sampled without weights")
-plt.hist(p_distribution,bins=50, label="physics",alpha=0.5)
+plt.hist(p.Particles['actual'],density=True,bins=100,alpha=0.5,label="physics")
+plt.hist(p.Particles['vz'] ,density=True,bins=100, weights=p.Particles['weights'],label="weighted samples")
+plt.legend()
+plt.show()
+
+#%%
+#weights1 = nP*weights/(np.sum(weights))
+weights1 = weights/(np.sum(weights))
+
+
+plt.figure()
+plt.hist(p_distribution,bins=100,label="physics")
+plt.hist(sampled_distribution,bins=100, weights=weights1,label="weighted samples",alpha=0.5)
 plt.legend()
 plt.show()
 
