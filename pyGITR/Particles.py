@@ -19,7 +19,7 @@ class Distribs():
     #        f = f/Integrale(f, x, Array=False)
     #    return f
 
-    def Gaussian(x: np.ndarray = np.linspace(-15000, 15000, 100000), sigma: float = 50.0, mu: float = 20.0, Normalized=True):
+    def Gaussian(x: np.ndarray = np.linspace(-15000, 15000, 100000), sigma: float = 30.0, mu: float = 70.0, Normalized=True):
         f = (1/(sigma*np.sqrt(2*np.pi)))*np.exp(-((x-mu)/sigma)**2)
         #f[np.argwhere(x<0)] = 0
         if Normalized:

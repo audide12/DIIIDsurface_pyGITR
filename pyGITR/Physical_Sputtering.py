@@ -56,9 +56,12 @@ class Sputtering_and_reflection():
             cls.mu_parameter = 3.5395
             cls.Eth_parameter = 114.9398 # in eV 
            
-        elif Projectile == 'Si' and Target =='C': # Find data
+        elif Projectile == 'Si' and Target =='C': # Fit with RUSTBCA simulations
             print('Choose a different set of projectile and target')
-        
+            cls.lambda_parameter = 1.0
+            cls.q_parameter = 1.8
+            cls.mu_parameter = 0.3
+            cls.Eth_parameter = 10.457 # in eV  
         
         elif Projectile == 'H' and Target =='Si':
             cls.lambda_parameter = 0.4819
@@ -85,8 +88,11 @@ class Sputtering_and_reflection():
             cls.q_parameter = 2.6951
             cls.mu_parameter = 1.7584
             cls.Eth_parameter = 20.035 # in eV     
-        elif Projectile == 'C' and Target =='Si':
-            print('Choose a different set of projectile and target')
+        elif Projectile == 'C' and Target =='Si':  # Fit with RUSTBCA simulations
+            cls.lambda_parameter = 1.0
+            cls.q_parameter = 1.4
+            cls.mu_parameter = 12.0
+            cls.Eth_parameter = 14 # in eV     
         elif Projectile == 'W' and Target =='Si':
             print('Choose a different set of projectile and target')    
         elif Projectile == 'H' and Target =='W':
