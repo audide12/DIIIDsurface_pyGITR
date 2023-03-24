@@ -186,6 +186,7 @@ class Sputtering_and_reflection():
             cls.a_2 = 0.1
             cls.a_3 = 2.2
             cls.a_4 = 0.18   
+            
         else:
             print('Choose a different set of projectile and target')    
             
@@ -196,7 +197,7 @@ class Sputtering_and_reflection():
     def Calculate_PhysicalSputtering_RotationFactor(cls, Projectile, Target, Incident_Energy, Incident_Theta):
         
         
-        flag = 1 # change it to zero if not found from the list 
+        flag = 0 # change it to zero if not found from the list 
         
         from scipy.interpolate import interp1d
         
@@ -237,15 +238,22 @@ class Sputtering_and_reflection():
             Sputtering_Dictionary = Sputtering_Rotation_C_W      
             
         else:
-            flag = 0
+            flag = 1
                 
-        if flag == 1:
-            f_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['f'], kind='cubic')
-            b_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['b'], kind='cubic')
-            c_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['c'], kind='cubic')
-            Theta0star_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['Theta0_star'], kind='cubic')
+        if flag == 0:
+            E0_array =  np.array(Sputtering_Dictionary['E0'])
+            f_array = np.array(Sputtering_Dictionary['f'])
+            b_array = np.array(Sputtering_Dictionary['b'])
+            c_array = np.array(Sputtering_Dictionary['c'])
+            Theta0_star_array = np.array(Sputtering_Dictionary['Theta0_star'])
             
-            cosine_factor = np.cos(np.pi*0.5*Incident_Theta/Theta0star_interpolate(Incident_Energy))**c_interpolate(Incident_Energy)
+            
+            f_interpolate = interp1d(E0_array,f_array)
+            b_interpolate = interp1d(E0_array, b_array)
+            c_interpolate = interp1d(E0_array, c_array)
+            Theta0star_interpolate = interp1d(E0_array, Theta0_star_array)
+            
+            cosine_factor = np.cos((np.pi*0.5*Incident_Theta/Theta0star_interpolate(Incident_Energy))**c_interpolate(Incident_Energy))
             
             factor = (cosine_factor)**(-f_interpolate(Incident_Energy)) * np.exp(b_interpolate(Incident_Energy)*(1-(1/cosine_factor) )) 
             
@@ -260,7 +268,7 @@ class Sputtering_and_reflection():
         
     
     
-    def Calculate_PhysicalSputteringParameters(self, Projectile, Target, Incident_Energy, Incident_Theta:float=0):
+    def Calculate_PhysicalSputteringParameters(self, Projectile, Target, Incident_Energy, Incident_Theta:float=0.0):
         Sputtering_and_reflection.Set_PhysicalSputteringParameters(Projectile,Target)
         Sputtering_and_reflection.Set_Mass_AtomicN(Projectile,Target)
         
@@ -282,7 +290,8 @@ class Sputtering_and_reflection():
         
         Y = self.q_parameter*Nuclear_stopping*Numerator**self.mu_parameter/(self.lambda_parameter + Numerator**self.mu_parameter)
         
-        #Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
+        if (Incident_Theta>0.0):
+            Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
         
         return Y
     
