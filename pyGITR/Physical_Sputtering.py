@@ -67,7 +67,8 @@ class Sputtering_and_reflection():
             cls.lambda_parameter = 0.4819
             cls.q_parameter = 0.0276
             cls.mu_parameter = 0.9951
-            cls.Eth_parameter = 49.792 # in eV  
+            cls.Eth_parameter = 49.792 # in eV
+            
         elif Projectile == 'D' and Target =='Si':
             cls.lambda_parameter = 0.5326
             cls.q_parameter = 0.0569
@@ -256,6 +257,9 @@ class Sputtering_and_reflection():
             cosine_factor = np.cos((np.pi*0.5*Incident_Theta/Theta0star_interpolate(Incident_Energy))**c_interpolate(Incident_Energy))
             
             factor = (cosine_factor)**(-f_interpolate(Incident_Energy)) * np.exp(b_interpolate(Incident_Energy)*(1-(1/cosine_factor) )) 
+            
+            if factor>100:
+                factor=1
             
             return factor
         
