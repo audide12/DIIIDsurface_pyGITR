@@ -17,7 +17,7 @@ class Sputtering_and_reflection():
             
             
     def ShowAvailableTargets(self):
-        for D in ['C', 'Si', 'W']:
+        for D in ['C', 'Si', 'W', 'SiC']:
             print(D)
 
 
@@ -125,7 +125,26 @@ class Sputtering_and_reflection():
             cls.lambda_parameter = 2.2697
             cls.q_parameter = 18.6006
             cls.mu_parameter = 3.1273
-            cls.Eth_parameter = 24.9885 # in eV   
+            cls.Eth_parameter = 24.9885 # in eV  
+            
+        elif Projectile == 'C' and Target =='SiC':  # from RustBCA
+            cls.lambda_parameter = 1.0
+            cls.q_parameter = 2.0
+            cls.mu_parameter = 1.3
+            cls.Eth_parameter = 25 # in eV   
+        
+        elif Projectile == 'Si' and Target =='SiC': # from RustBCA
+            cls.lambda_parameter = 2.0
+            cls.q_parameter = 4.0
+            cls.mu_parameter = 1.3
+            cls.Eth_parameter = 70 # in eV   
+            
+        elif Projectile == 'H' and Target =='SiC': # from RustBCA
+            cls.lambda_parameter = 2.2
+            cls.q_parameter = 0.031
+            cls.mu_parameter = 1.5
+            cls.Eth_parameter = 40 # in eV       
+            
         elif Projectile == 'Si' and Target =='W':
             print('Choose a different set of projectile and target')    
         
@@ -171,6 +190,9 @@ class Sputtering_and_reflection():
         elif Target == 'W':
             cls.Target_Mass = 183.84
             cls.Target_AtomicN = 74
+        elif Target == 'SiC':
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20    
            
             
             
