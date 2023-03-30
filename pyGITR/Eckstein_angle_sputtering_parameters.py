@@ -14,6 +14,53 @@ List_Paramters = ['E0','f','b','c','Theta0_star']
 
 
 
+#  Hydrogen to Silicon Carbide -- using RUSTBCA (done)
+Sputtering_Rotation_H_SiC = dict.fromkeys(List_Paramters)
+
+Sputtering_Rotation_H_SiC['E0'] = [10, 27.82, 46.4159, 129.1550, 215.4435, 359.3814]
+
+Sputtering_Rotation_H_SiC['f'] =  [48.5, 56, 58.7,  50, 50, 51]
+
+Sputtering_Rotation_H_SiC['b'] =  [35.5, 39, 39, 38, 38, 38.5]
+
+Sputtering_Rotation_H_SiC['c'] =  [0.4, 0.3, 0.3, 0.6, 0.6, 0.6]
+
+Sputtering_Rotation_H_SiC['Theta0_star'] = [260, 260, 260, 260, 260, 260]
+
+
+
+
+
+#  Silicon to Silicon Carbide -- using RUSTBCA (done)
+Sputtering_Rotation_C_SiC = dict.fromkeys(List_Paramters)
+
+Sputtering_Rotation_C_SiC['E0'] = [10, 27.82, 46.4159, 129.1550, 215.4435, 359.3814, 599.4853]
+
+Sputtering_Rotation_C_SiC['f'] =  [50, 54, 48, 46, 45, 43, 42]
+
+Sputtering_Rotation_C_SiC['b'] =  [37, 35, 35, 35, 35, 35, 35.5]
+
+Sputtering_Rotation_C_SiC['c'] =  [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.5]
+
+Sputtering_Rotation_C_SiC['Theta0_star'] = [320, 320, 320, 360, 360, 360, 360]
+
+
+
+
+
+#  Silicon to Silicon Carbide -- using RUSTBCA (done)
+Sputtering_Rotation_Si_SiC = dict.fromkeys(List_Paramters)
+
+Sputtering_Rotation_Si_SiC['E0'] = [10, 27.82, 46.4159, 129.1550, 215.4435, 359.3814]
+
+Sputtering_Rotation_Si_SiC['f'] =  [19, 20, 21, 17,  17, 8]
+
+Sputtering_Rotation_Si_SiC['b'] =  [10, 10, 10, 9, 8, 5]
+
+Sputtering_Rotation_Si_SiC['c'] =  [0.3, 0.3, 0.3, 0.3, 0.9, 1.5]
+
+Sputtering_Rotation_Si_SiC['Theta0_star'] = [260, 260, 260, 260, 260, 260]
+
 
 #  Silicon to Carbon -- using RUSTBCA (done)
 Sputtering_Rotation_Si_C = dict.fromkeys(List_Paramters)
