@@ -1,1 +1,2 @@
-surface.nc
+*.nc
+.DS_Store
