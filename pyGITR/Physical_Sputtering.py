@@ -1,5 +1,5 @@
 import numpy as np
-from pyGITR.math_helper import *
+#from pyGITR.math_helper import *
 from typing import Callable
 import matplotlib.pyplot as plt
 import pydoc
@@ -17,7 +17,7 @@ class Sputtering_and_reflection():
             
             
     def ShowAvailableTargets(self):
-        for D in ['C', 'Si', 'W']:
+        for D in ['C', 'Si', 'W', 'SiC']:
             print(D)
 
 
@@ -56,15 +56,18 @@ class Sputtering_and_reflection():
             cls.mu_parameter = 3.5395
             cls.Eth_parameter = 114.9398 # in eV 
            
-        elif Projectile == 'Si' and Target =='C': # Find data
-            print('Choose a different set of projectile and target')
-        
+        elif Projectile == 'Si' and Target =='C': # Fit with RUSTBCA simulations
+            cls.lambda_parameter = 1.0
+            cls.q_parameter = 1.8
+            cls.mu_parameter = 0.3
+            cls.Eth_parameter = 10.457 # in eV  
         
         elif Projectile == 'H' and Target =='Si':
             cls.lambda_parameter = 0.4819
             cls.q_parameter = 0.0276
             cls.mu_parameter = 0.9951
-            cls.Eth_parameter = 49.792 # in eV  
+            cls.Eth_parameter = 49.792 # in eV
+            
         elif Projectile == 'D' and Target =='Si':
             cls.lambda_parameter = 0.5326
             cls.q_parameter = 0.0569
@@ -85,10 +88,13 @@ class Sputtering_and_reflection():
             cls.q_parameter = 2.6951
             cls.mu_parameter = 1.7584
             cls.Eth_parameter = 20.035 # in eV     
-        elif Projectile == 'C' and Target =='Si':
-            print('Choose a different set of projectile and target')
+        elif Projectile == 'C' and Target =='Si':  # Fit with RUSTBCA simulations
+            cls.lambda_parameter = 1.0
+            cls.q_parameter = 1.4
+            cls.mu_parameter = 12.0
+            cls.Eth_parameter = 14 # in eV     
         elif Projectile == 'W' and Target =='Si':
-            print('Choose a different set of projectile and target')    
+            print('Choose a different set of projectile and target, data not available for W->Si')    
         elif Projectile == 'H' and Target =='W':
             cls.lambda_parameter = 1.0087
             cls.q_parameter = 0.0075
@@ -118,9 +124,31 @@ class Sputtering_and_reflection():
             cls.lambda_parameter = 2.2697
             cls.q_parameter = 18.6006
             cls.mu_parameter = 3.1273
-            cls.Eth_parameter = 24.9885 # in eV   
+            cls.Eth_parameter = 24.9885 # in eV  
+            
+        elif Projectile == 'C' and Target =='SiC':  # from RustBCA
+            cls.lambda_parameter = 1.0
+            cls.q_parameter = 2.0
+            cls.mu_parameter = 1.3
+            cls.Eth_parameter = 25 # in eV   
+        
+        elif Projectile == 'Si' and Target =='SiC': # from RustBCA
+            cls.lambda_parameter = 2.0
+            cls.q_parameter = 4.0
+            cls.mu_parameter = 1.3
+            cls.Eth_parameter = 70 # in eV   
+            
+        elif Projectile == 'H' and Target =='SiC': # from RustBCA
+            cls.lambda_parameter = 2.2
+            cls.q_parameter = 0.031
+            cls.mu_parameter = 1.5
+            cls.Eth_parameter = 40 # in eV       
+            
         elif Projectile == 'Si' and Target =='W':
+            print('Choose a different set of projectile and target, data not available for Si-> W')    
+        else:
             print('Choose a different set of projectile and target')    
+            
         
         
        
@@ -164,6 +192,9 @@ class Sputtering_and_reflection():
         elif Target == 'W':
             cls.Target_Mass = 183.84
             cls.Target_AtomicN = 74
+        elif Target == 'SiC':
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20    
            
             
             
@@ -180,6 +211,18 @@ class Sputtering_and_reflection():
             cls.a_2 = 0.1
             cls.a_3 = 2.2
             cls.a_4 = 0.18   
+        elif Projectile == 'W' and Target =='W':
+            cls.a_1 = -3.685
+            cls.a_2 = 0.02781
+            cls.a_3 = 0.7825e-4
+            cls.a_4 = -1.109
+        elif Projectile == 'Si' and Target =='Si':
+            cls.a_1 = -0.8631e1
+            cls.a_2 = 0.6888e-1
+            cls.a_3 = 0.1808e-1
+            cls.a_4 = -0.8577 
+        
+            
         else:
             print('Choose a different set of projectile and target')    
             
@@ -190,7 +233,7 @@ class Sputtering_and_reflection():
     def Calculate_PhysicalSputtering_RotationFactor(cls, Projectile, Target, Incident_Energy, Incident_Theta):
         
         
-        flag = 1 # change it to zero if not found from the list 
+        flag = 0 # change it to zero if not found from the list 
         
         from scipy.interpolate import interp1d
         
@@ -231,18 +274,30 @@ class Sputtering_and_reflection():
             Sputtering_Dictionary = Sputtering_Rotation_C_W      
             
         else:
-            flag = 0
+            flag = 1
                 
-        if flag == 1:
-            f_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['f'], kind='cubic')
-            b_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['b'], kind='cubic')
-            c_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['c'], kind='cubic')
-            Theta0star_interpolate = interp1d(Sputtering_Dictionary['E0'], Sputtering_Dictionary['Theta0_star'], kind='cubic')
+        if flag == 0:
+            E0_array =  np.array(Sputtering_Dictionary['E0'])
+            f_array = np.array(Sputtering_Dictionary['f'])
+            b_array = np.array(Sputtering_Dictionary['b'])
+            c_array = np.array(Sputtering_Dictionary['c'])
+            Theta0_star_array = np.array(Sputtering_Dictionary['Theta0_star'])
             
-            cosine_factor = np.cos(np.pi*0.5*Incident_Theta/Theta0star_interpolate(Incident_Energy))**c_interpolate(Incident_Energy)
+            
+            f_interpolate = interp1d(E0_array,f_array,bounds_error=False,fill_value="extrapolate")
+            b_interpolate = interp1d(E0_array, b_array,bounds_error=False,fill_value="extrapolate")
+            c_interpolate = interp1d(E0_array, c_array,bounds_error=False,fill_value="extrapolate")
+            Theta0star_interpolate = interp1d(E0_array, Theta0_star_array,bounds_error=False,fill_value="extrapolate")
+            
+            cosine_factor = np.cos((np.pi*0.5*Incident_Theta/Theta0star_interpolate(Incident_Energy))**c_interpolate(Incident_Energy))
             
             factor = (cosine_factor)**(-f_interpolate(Incident_Energy)) * np.exp(b_interpolate(Incident_Energy)*(1-(1/cosine_factor) )) 
             
+            if factor>1000000:
+                factor = 1
+            elif np.isnan(factor):
+                factor = 1            
+            #print("factor is   ",factor)
             return factor
         
         else:
@@ -254,7 +309,7 @@ class Sputtering_and_reflection():
         
     
     
-    def Calculate_PhysicalSputteringParameters(self, Projectile, Target, Incident_Energy, Incident_Theta:float=0):
+    def Calculate_PhysicalSputteringParameters(self, Projectile, Target, Incident_Energy, Incident_Theta:float=0.0):
         Sputtering_and_reflection.Set_PhysicalSputteringParameters(Projectile,Target)
         Sputtering_and_reflection.Set_Mass_AtomicN(Projectile,Target)
         
@@ -276,13 +331,8 @@ class Sputtering_and_reflection():
         
         Y = self.q_parameter*Nuclear_stopping*Numerator**self.mu_parameter/(self.lambda_parameter + Numerator**self.mu_parameter)
         
-<<<<<<< HEAD
-        #Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
-=======
-        
-        if Incident_Theta != 0:    
+        if (Incident_Theta>0.0):
             Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
->>>>>>> refs/remotes/origin/main
         
         return Y
     
@@ -304,7 +354,46 @@ class Sputtering_and_reflection():
         return R_N.real
     
     
+class Physical_Sputtering_Reflection_Plots():
     
+
+    @classmethod
+    def Sputtering_yields(cls, Projectile, Target,Energies):
+        
+        s_plot = Sputtering_and_reflection()
+
+        #Energies = np.linspace(460,1e5,10000)
+        Sputtering = np.zeros(Energies.size)
+        counter = 0
+        
+        
+        for energy in Energies:
+            
+            
+            Sputtering[counter] = s_plot.Calculate_PhysicalSputteringParameters(Projectile,Target,energy).real
+            counter = counter + 1
+
+        return Sputtering
+    
+    @classmethod
+    def Reflection_yields(cls, Projectile, Target, Energies):
+        
+        s_plot = Sputtering_and_reflection()
+
+        #Energies = np.linspace(20,1e5,10000)
+        Reflection = np.zeros(Energies.size)
+        counter = 0
+        
+        
+        for energy in Energies:
+            
+            
+            Reflection[counter] = s_plot.Calculate_ReflectionCoefficients(Projectile,Target,energy).real
+            counter = counter + 1
+
+        return Reflection
+       #plt.plot(Energies,Sputtering)
+          
     
 #s = Sputtering_and_reflection()
 #s.ShowAvailableTargets()

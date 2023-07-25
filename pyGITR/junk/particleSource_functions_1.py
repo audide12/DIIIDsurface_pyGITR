@@ -18,7 +18,7 @@ def checkCoplanar(x,y,z,a,b,c,d):
     return coplanar
 
 # Load geomGITR
-def loadCFG(geomFile = "gitrGeometryFromGitrm.cfg"):
+def loadCFG_1(geomFile = "gitrGeometryFromGitrm.cfg"):
     with io.open(geomFile) as f:
         config = libconf.load(f)
         
@@ -36,17 +36,13 @@ def loadCFG(geomFile = "gitrGeometryFromGitrm.cfg"):
     b = np.array(config['geom']['b'])
     c = np.array(config['geom']['c'])
     d = np.array(config['geom']['d'])
-    
-    Z = np.array(config['geom']['Z'])
 
     area = np.array(config['geom']['area'])
     plane_norm = np.array(config['geom']['plane_norm'])
     surface = np.array(config['geom']['surface'])
     inDir = np.array(config['geom']['inDir'])
-    print("right place")
 
     return x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surface,inDir
-
 
 def getArea(x1, y1, z1, x2, y2, z2, x3, y3, z3):
     A = np.reshape([x1,y1,z1],(1,3))
@@ -101,53 +97,48 @@ def offsetPoints(x,y,z,a,b,c,inDir):
 
 
 def genPoints(numPoints,x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d):
-    # print(numPoints,x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d)
-
-    x = (x1,x2,x3)
-    y = (y1,y2,y3)
-    z = (z1,z2,z3)
-
-    xmin,xmax = min(x),max(x)
-    ymin,ymax = min(y),max(y)
-    zmin,zmax = min(z),max(z)
-
-    # print(xmin,xmax)
-    # print(ymin,ymax)
-    # print(zmin,zmax)
-
     xr,yr,zr=[],[],[]
     genPoints = 0
     while genPoints < numPoints:
+        x = (x1,x2,x3)
+        y = (y1,y2,y3)
+        z = (z1,z2,z3)
+
+        xmin,xmax = min(x),max(x)
+        ymin,ymax = min(y),max(y)
+        zmin,zmax = min(z),max(z)
+
         switch = random.randint(0,3)
-        if switch == 0 and c!=0:
+        if switch == 0:
             xrand = random.uniform(xmin,xmax)
             yrand = random.uniform(ymin,ymax)
-            if zmin!=zmax: zrand = -(d + a*xrand + b*yrand)/c
-            else: zrand=zmin
+            zrand = -(d + a*xrand + b*yrand)/c
             inside = isInside(x1, y1, z1, x2, y2, z2, x3, y3, z3, xrand, yrand, zrand)
             if checkCoplanar(xrand,yrand,zrand,a,b,c,d) and zrand >= zmin and zrand <= zmax and inside:
+            # if checkCoplanar(xrand,yrand,zrand,a,b,c,d) and zrand >= zmin and zrand <= zmax:
                 xr.append(xrand)
                 yr.append(yrand)
                 zr.append(zrand)
                 genPoints+=1
-        if switch == 1 and b!=0:
+        if switch == 1:
             xrand = random.uniform(xmin,xmax)
             zrand = random.uniform(zmin,zmax)
-            if ymin!=ymax: yrand = -(d + a*xrand + c*zrand)/b
-            else: yrand=ymin
+            yrand = -(d + a*xrand + c*zrand)/b
             inside = isInside(x1, y1, z1, x2, y2, z2, x3, y3, z3, xrand, yrand, zrand)
             if checkCoplanar(xrand,yrand,zrand,a,b,c,d) and yrand >= ymin and yrand <= ymax and inside:
+            # if checkCoplanar(xrand,yrand,zrand,a,b,c,d) and yrand >= ymin and yrand <= ymax:
                 xr.append(xrand)
                 yr.append(yrand)
                 zr.append(zrand)
                 genPoints+=1
-        if switch == 2 and a!=0:
+        if switch == 2:
             zrand = random.uniform(zmin,zmax)
             yrand = random.uniform(ymin,ymax)
-            if xmin!=xmax: xrand = -(d + c*zrand + b*yrand)/a
-            else: xrand=xmin
+            print(a)
+            xrand = -(d + c*zrand + b*yrand)/a
             inside = isInside(x1, y1, z1, x2, y2, z2, x3, y3, z3, xrand, yrand, zrand)
             if checkCoplanar(xrand,yrand,zrand,a,b,c,d) and xrand >= xmin and xrand <= xmax and inside:
+            # if checkCoplanar(xrand,yrand,zrand,a,b,c,d) and xrand >= xmin and xrand <= xmax:
                 xr.append(xrand)
                 yr.append(yrand)
                 zr.append(zrand)
@@ -218,6 +209,7 @@ def loadNC(File):
 
 def checkRotation(surface_x,surface_y,surface_z,xr,yr,zr,a,b,c,inDir):
     pass
+
 
 
 

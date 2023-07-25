@@ -249,6 +249,37 @@ class GeomPlot(GeomGroup):
         mx = max([xmax, ymax, zmax])
         self.SetAxisLim(mn, mx)
         
+    def Plot_Geom(self, GroupID=None, ax=None, fig=None, **kwargs):
+        if fig is None:
+            self.fig = plt.figure()
+        if ax is None:
+            self.ax = self.fig.add_subplot(111, projection='3d')
+        else:
+            self.ax = ax
+        self.PlotTriangles(GroupID, ax, **kwargs)
+        xmin = np.min(self.Triangles[:, :, 0])
+        xmax = np.max(self.Triangles[:, :, 0])
+        ymin = np.min(self.Triangles[:, :, 1])
+        ymax = np.max(self.Triangles[:, :, 1])
+        zmin = np.min(self.Triangles[:, :, 2])
+        zmax = np.max(self.Triangles[:, :, 2])
+        mn = min([xmin, ymin, zmin])
+        mx = max([xmax, ymax, zmax])
+        
+        self.ax.set_xlim3d(xmin,xmax)
+        self.ax.set_ylim3d(ymin,ymax)
+        self.ax.set_zlim3d(zmin,zmax)              
+    
+        self.ax.set_zlabel('Z-Axis')
+        self.ax.set_xlabel('X-Axis')
+        self.ax.set_ylabel('Y-Axis')
+        
+    
+        
+        
+        
+        
+    
     def Plot_output(self, GroupID=None, ax=None, fig=None, **kwargs):
         if fig is None:
             self.fig = plt.figure()
@@ -266,6 +297,24 @@ class GeomPlot(GeomGroup):
             ax = plt.gca()
         ax.scatter(self.Centroid[:, 0], self.Centroid[:, 1],
                    self.Centroid[:, 2], marker='o', color='b')
+        
+    def ShowCentroids_Annotated(self, GroupID=None,ax=None):
+        if ax is None:
+            ax = self.ax
+        if ax is None:
+            ax = plt.gca()
+            
+        Idx = self.GetGroupIdx(GroupID)    
+        print("-----------")    
+        for i in Idx:
+            print(i)
+        print("-----------")    
+        ax.scatter(self.Centroid[Idx, 0], self.Centroid[Idx, 1],
+                   self.Centroid[Idx, 2], marker='o', color='b')
+        
+        for i in Idx:
+            #print(index)
+            ax.text(self.Centroid[i, 0], self.Centroid[i, 1], self.Centroid[i, 2], str(i), color='red')    
 
     def ShowNormals(self, GroupID=None, ax=None, L=0.002, Color='b'):
         if ax is None:
@@ -286,6 +335,30 @@ class GeomPlot(GeomGroup):
         self.ax.set_xlim3d(mn, mx)
         self.ax.set_ylim3d(mn, mx)
         self.ax.set_zlim3d(mn, mx)
+        
+        
+    def ShowInDir(self, GroupID=None, ax=None, L=0.005, Color='g'):
+        if ax is None:
+            ax = self.ax
+        if ax is None:
+            ax = plt.gca()
+        c = self.Centroid
+        v = self.normalVec
+        n = self.GeomInput['inDir']
+
+        Idx = self.GetGroupIdx(GroupID)
+        if self.Verbose:
+            print('InDir Idx:', Idx)
+        ax.quiver(c[Idx, 0], c[Idx, 1], c[Idx, 2], v[Idx, 0]*n[Idx], v[Idx, 1]*n[Idx], v[Idx, 2]*n[Idx], length=5*L, normalize=True, color=Color)
+        plt.show()
+        # ax.add_collection(lc)
+
+
+
+    def SetAxisLim3D(self, xrange, yrange, zrange):
+        self.ax.set_xlim3d(xrange[0],xrange[1])
+        self.ax.set_ylim3d(yrange[0],yrange[1])
+        self.ax.set_zlim3d(zrange[0],zrange[1])    
 
 class GeomSetup(GeomInput, GeomPlot):
 
@@ -318,21 +391,21 @@ class GeomSetup(GeomInput, GeomPlot):
         self.ImportMeshElements(mesh)
         self.LoadElemsAttr()
         
-    def ShowInDir(self, GroupID=None, ax=None, L=0.002, Color='g'):
-        if ax is None:
-            ax = self.ax
-        if ax is None:
-            ax = plt.gca()
-        c = self.Centroid
-        v = self.normalVec
-        n = self.GeomInput['inDir']
+    # def ShowInDir(self, GroupID=None, ax=None, L=0.002, Color='g'):
+    #     if ax is None:
+    #         ax = self.ax
+    #     if ax is None:
+    #         ax = plt.gca()
+    #     c = self.Centroid
+    #     v = self.normalVec
+    #     n = self.GeomInput['inDir']
 
-        Idx = self.GetGroupIdx(GroupID)
-        if self.Verbose:
-            print('Normals Idx:', Idx)
-        ax.quiver(c[Idx, 0], c[Idx, 1], c[Idx, 2], v[Idx, 0]*n[Idx], v[Idx, 1]*n[Idx], v[Idx, 2]*n[Idx], length=5*L, normalize=True, color=Color)
-        plt.show()
-        # ax.add_collection(lc)    
+    #     Idx = self.GetGroupIdx(GroupID)
+    #     if self.Verbose:
+    #         print('Normals Idx:', Idx)
+    #     ax.quiver(c[Idx, 0], c[Idx, 1], c[Idx, 2], v[Idx, 0]*n[Idx], v[Idx, 1]*n[Idx], v[Idx, 2]*n[Idx], length=5*L, normalize=True, color=Color)
+    #     plt.show()
+    #     # ax.add_collection(lc)    
 
     def ImportMeshElements(self, mesh) -> None:
 
@@ -403,7 +476,8 @@ class GeomSetup(GeomInput, GeomPlot):
 
         with io.open(FileName,'w') as f:
             libconf.dump(self.ConvertGeomInput(),f)
+            
+            
+    
 
-
-
-
+    
