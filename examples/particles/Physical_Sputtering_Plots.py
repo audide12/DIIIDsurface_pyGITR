@@ -86,11 +86,11 @@ class Physical_Sputtering_Reflection_Plots():
 import matplotlib.pyplot as plt              
 plt.figure()
 
-Projectile = 'H'
+Projectile = 'D'
 Target = 'Si'
        
 Energies = np.linspace(0.1,1e5,10000)
-Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target,Energies)
+Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target,Energies,0.0)
 
 plt.loglog(Energies,Sputtering.real,'ro')
 # plt.xlim(0.1,1e5)
@@ -133,7 +133,30 @@ plt.ylabel('Sputering Yield (Y)')
 plt.title(r'$%s \rightarrow %s \quad (Energy = %.0f eV)$'%(Projectile,Target,Energy))
 
     
+#%% Sputtering yield comparisons
 
+import matplotlib.pyplot as plt              
+plt.figure()
+
+Projectile = 'D'
+Target = 'W'
+Target2='C'
+       
+Energies = np.linspace(0.1,1e5,10000)
+Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target,Energies)
+Sputtering2 = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target2,Energies)
+
+
+plt.loglog(Energies,Sputtering.real,'ro',label=r'$%s \rightarrow %s \quad $'%(Projectile,Target))
+plt.loglog(Energies,Sputtering2.real,'b',label=r'$%s \rightarrow %s \quad $'%(Projectile,Target2))
+# plt.xlim(0.1,1e5)
+# plt.ylim(1e-5,2)
+
+plt.xlabel('E_incident(eV)')
+plt.ylabel('Sputering Yield (Y)')
+#plt.title(r'$%s \rightarrow %s \quad $'%(Projectile,Target)+'(normal incidence)')
+plt.legend()
+plt.show()
 
 
 

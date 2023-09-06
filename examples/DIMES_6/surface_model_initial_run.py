@@ -52,7 +52,7 @@ for i in surfacehit_C:
     
 print(count_C,"have hit a mesh element (not necessarily a surface)")
 
-#%%  Reading position files of Tungsten
+#%%  Reading position files of silicon
 
 
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/output_Si_1/positions.nc'
@@ -119,9 +119,7 @@ for z in Zs:
 makeInitNC(len(Surfaces),area,Concentration)
 
 
-#%%
-
-#Reading the surface features from the surface evolution netcdf file
+#%% Reading the surface features from the surface evolution netcdf file
 
 FileNameSurfaceConcentration='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/surface_evolution_C_Si.nc'
 
@@ -137,8 +135,7 @@ Surface_time = SurfaceConcentrationData['time'][:]
 Surface_number = SurfaceConcentrationData['surface_number'][:]
 counter = len(Surface_time)
 
-#%%
-# Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITRb particle
+#%% Calculation of erosion and deposition fluxes for Carbon and Tungsten for each GITRb particle
 
 Gamma_C_redep = np.zeros((len(Surfaces),1))
 Y_CSiC_Gamma_C_redep = np.zeros((len(Surfaces),1))
@@ -219,9 +216,7 @@ Gamma_Si_dep_global = Gamma_Si_redep
 
 
 
-#%%
-
-# The following arrays will keep track of entries to be made in the next GITR run. 
+#%% The following arrays will keep track of entries to be made in the next GITR run. 
 
 nP_C_global = 0 #tracks total number of eroded particles
 nP_Si_global = 0 #tracks total number of eroded particles
@@ -256,15 +251,25 @@ for i,surface in enumerate(Surfaces):
         print("Surface:",surface,"Si particles:",num_particles)
         particleSourceDict_Si[surface] = round(num_particles)
         nP_Si_global+=round(num_particles)            
+print("Si particles generated")  
+#%%  making particle sources
+
+import time
+
+start = time.time()
+
+
 
 makeParticleSource(particleSourceDict_C, "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/gitrGeom.cfg", "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_C.nc")
 if nP_Si_global>0:
     
     makeParticleSource(particleSourceDict_Si, "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/gitrGeom.cfg", "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_Si.nc")
             
-          
-#%%
-# Estimating the total time evolution for the surface model
+
+end = time.time()
+print(end - start)
+            
+#%% Estimating the total time evolution for the surface model
 
 last_entry_C = np.reshape(Concentration[6][:,-1],(len(Surfaces),1))
 last_entry_Si = np.reshape(Concentration[14][:,-1],(len(Surfaces),1))
@@ -303,7 +308,7 @@ RHS_C = Gamma_C_net - Gamma_C_bulk
 RHS_Si = Gamma_Si_net - Gamma_Si_bulk
 RHS_SiC = Gamma_SiC_net - Gamma_SiC_bulk
 
-Stopping_criteria = 0.1 # for C_C and C_W
+# Stopping_criteria = 0.1 # for C_C and C_W
 
 RHS_C   = np.abs(RHS_C) 
 RHS_Si  = np.abs(RHS_Si)
@@ -321,11 +326,15 @@ Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surfac
 
 
 
-#%%
+#%% Delta_t_Stopping
 # The actual surface model differential equation
 # Evolution of C_C and C_Si
 # Stopping criterion implemented
 # Delta_t is a constant for the surface model
+
+import time
+
+start = time.time()
 
 Time = Delta_t_surface
 Time_steps = 1e4
@@ -390,9 +399,10 @@ for t in range(1,int(Time_steps)):
         print(Delta_t_Stopping," Delta_t_Stopping ", t)
         break
         
+end = time.time()
+print(end - start)    
 
-#%%
-# Appending time to all the surface characteristics
+#%% Appending time to all the surface characteristics
 
 Concentration[6] = np.concatenate((Concentration[6],new_entry_C),axis=1)
 Concentration[14] = np.concatenate((Concentration[14],new_entry_Si),axis=1)
@@ -406,12 +416,7 @@ Flux_proportionality[20] = np.append(Flux_proportionality[20],prop_SiC)
 Surface_time = np.append(Surface_time,Surface_time[-1]+Delta_t_Stopping)
 
 
-#%%
-#Writing the surface features with time
-
-
-#Writing the surface features with time
-
+#%% Writing the surface features with time
 
 os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/surface_evolution_C_Si.nc")
 

@@ -30,6 +30,7 @@ class Sputtering_and_reflection():
             cls.q_parameter = 0.0241
             cls.mu_parameter = 1.4103
             cls.Eth_parameter = 38.630 # in eV
+            
         elif Projectile == 'D' and Target =='C':
             cls.lambda_parameter = 1.2848
             cls.q_parameter = 0.0539
@@ -73,6 +74,7 @@ class Sputtering_and_reflection():
             cls.q_parameter = 0.0569
             cls.mu_parameter = 1.6537
             cls.Eth_parameter = 24.543 # in eV  
+            
         elif Projectile == 'T' and Target =='Si':
             cls.lambda_parameter = 0.4112
             cls.q_parameter = 0.0816

@@ -23,16 +23,16 @@ import numpy as np
 
 #os.system("mv /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_C.nc /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf.nc")
 
-ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/particleConf_Si.nc'
-GeometryFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/gitrGeom.cfg'
+ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_Si.nc'
+GeometryFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/gitrGeom.cfg'
 B0 = 2.25
-nP=10000
+nP=1000000
 dt=1e-8
 nT=1e4
 
 
 
-def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom.cfg',folder='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/'):
+def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom.cfg',folder='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/'):
 
     B0 = 2.25
     thetaB = -2
@@ -52,7 +52,9 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.SetSurfaceModel()
     i.SetGeomHash()
     i.SetGeomSheath()
-
+    
+    i.Input['flags']['USE_CUDA'] = 1
+    
     # Set the standard flags
     i.Input['flags']['BIASED_SURFACE'] = 0
     i.Input['flags']['USE_SURFACE_POTENTIAL'] = 0
@@ -70,8 +72,8 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['flags']['USE3DTETGEOM'] = 1  # causes errors for 3D simulations
     i.Input['flags']['SPECTROSCOPY'] = 2
     
-    i.Input['flags']['PARTICLE_TRACKS'] = 0   #PARTICLE_TRACKS turns on/off even producing a history.nc file
-    i.Input['diagnostics']['trackSubSampleFactor'] = 5e4
+    i.Input['flags']['PARTICLE_TRACKS'] = 1   #PARTICLE_TRACKS turns on/off even producing a history.nc file
+    i.Input['diagnostics']['trackSubSampleFactor'] = 5e2
 
     
 
@@ -135,7 +137,7 @@ from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 import numpy as np
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/output_Si_2/history.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/output_Si_2/history.nc'
 HistoryData = Dataset(FileNameHistory, "r", format="NETCDF4")
 x = np.array(HistoryData.variables['x'])
 z = np.array(HistoryData.variables['z'])
@@ -146,18 +148,18 @@ nP = HistoryData.dimensions['nP'].size
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-for i in range(9000,9010):
+for i in range(nP):
     ax.plot(x[i,:],y[i,:],z[i,:])
 ax.set_zlabel('Z-Axis')
 ax.set_xlabel('X-Axis')
 ax.set_ylabel('Y-Axis')
-ax.set_xlim([1.45,1.51])
-ax.set_zlim([-1.25,-1.2])
-ax.set_ylim([-0.025,0.025])
+# ax.set_xlim([1.45,1.51])
+# ax.set_zlim([-1.25,-1.2])
+# ax.set_ylim([-0.025,0.025])
 
 #g.Plot_Geom(["DiMES","BoundBox"],fig=fig, ax=ax)
-g.Plot_Geom(["DiMES"],fig=fig, ax=ax)
-g.Plot_Geom(ElemAttr='Z', Alpha=0.0, fig=fig, ax=ax)        
+#g.Plot_Geom(["DiMES"],fig=fig, ax=ax)
+#g.Plot_Geom(ElemAttr='Z', Alpha=0.0, fig=fig, ax=ax)        
 #g.Plot(ElemAttr='Z', Alpha=0.1, fig=fig, ax=ax)    
 
 

@@ -39,7 +39,7 @@ def makeParticleSource(data,geomFile,particleFile):
     surface = np.array(config['geom']['surface'])
     indir = np.array(config['geom']['inDir'])
     
-    particleFile1 = '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_4/input/particleConf_temp.nc'
+    particleFile1 = '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_temp.nc'
 
     # Generate positions per mesh element
     nP = 0
@@ -227,7 +227,7 @@ def makeParticleSource(data,geomFile,particleFile):
     # ncFile.close()
         
     
-    os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_4/input/particleConf_temp.nc")
+    os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_temp.nc")
     
     rootgrp = netCDF4.Dataset(particleFile, "w", format="NETCDF4")
     npp = rootgrp.createDimension("nP", nP)

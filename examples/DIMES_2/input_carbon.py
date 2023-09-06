@@ -144,7 +144,7 @@ import netCDF4
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/output_C_2/history.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_4/output_C_1/history.nc'
 HistoryData = Dataset(FileNameHistory, "r", format="NETCDF4")
 x = np.array(HistoryData.variables['x'])
 z = np.array(HistoryData.variables['z'])

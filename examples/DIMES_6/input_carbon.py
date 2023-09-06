@@ -26,7 +26,7 @@ import numpy as np
 ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_C.nc'
 GeometryFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/gitrGeom.cfg'
 B0 = 2.25
-nP=10000
+nP=1000000
 dt=1e-8
 nT=1e4
 
@@ -56,6 +56,8 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     i.SetGeomHash()
     i.SetGeomSheath()
 
+    i.Input['flags']['USE_CUDA'] = 1
+    
     # Set the standard flags
     i.Input['flags']['BIASED_SURFACE'] = 0
     i.Input['flags']['USE_SURFACE_POTENTIAL'] = 0
@@ -73,8 +75,8 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     i.Input['flags']['USE3DTETGEOM'] = 1  # causes errors  for 3D simulations
     i.Input['flags']['SPECTROSCOPY'] = 2
     
-    i.Input['flags']['PARTICLE_TRACKS'] = 0   #PARTICLE_TRACKS turns on/off even producing a history.nc file
-    i.Input['diagnostics']['trackSubSampleFactor'] = 5e4
+    i.Input['flags']['PARTICLE_TRACKS'] = 1   #PARTICLE_TRACKS turns on/off even producing a history.nc file
+    i.Input['diagnostics']['trackSubSampleFactor'] = 5e2
     
     # Set the INTERP flags
     i.Input['flags']['BFIELD_INTERP'] = 2
@@ -149,14 +151,14 @@ nP = HistoryData.dimensions['nP'].size
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-for i in range(400,500):
+for i in range(100,1000):
     ax.plot(x[i,:],y[i,:],z[i,:])
 ax.set_zlabel('Z-Axis')
 ax.set_xlabel('X-Axis')
 ax.set_ylabel('Y-Axis')
     
 #g.Plot_Geom(["DiMES"],fig=fig, ax=ax)
-g.Plot_Geom(["DiMES","BoundBox"],fig=fig, ax=ax)
+#g.Plot_Geom(["DiMES","BoundBox"],fig=fig, ax=ax)
 #g.Plot(ElemAttr='Z', Alpha=0.1, fig=fig, ax=ax)    
 
 #np.argwhere(np.isnan(Gamma_C_ero_global))

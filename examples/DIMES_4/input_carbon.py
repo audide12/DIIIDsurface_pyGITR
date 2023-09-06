@@ -135,7 +135,7 @@ import netCDF4
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_4/output_C_2/history.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_4/output/history.nc'
 HistoryData = Dataset(FileNameHistory, "r", format="NETCDF4")
 x = np.array(HistoryData.variables['x'])
 z = np.array(HistoryData.variables['z'])
@@ -146,7 +146,7 @@ nP = HistoryData.dimensions['nP'].size
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-for i in range(400,500):
+for i in range(1,100):
     ax.plot(x[i,:],y[i,:],z[i,:])
 ax.set_zlabel('Z-Axis')
 ax.set_xlabel('X-Axis')

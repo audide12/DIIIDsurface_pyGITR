@@ -28,7 +28,7 @@ surface_in_question = 42
 
 #%%
 
-surface_in_question = 17
+surface_in_question = 2
 
 
 # print(1/np.polyfit(np.log(Surface_time), Concentration[20][surface_in_question,:], 1)    )
@@ -60,7 +60,7 @@ plt.legend()
 plt.title("Surface Element %d" % surface_in_question)
 plt.show()
 #%% Reading position files of Carbon
-#run_no = 2
+run_no = 2
 
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/output_C_'+str(run_no)+'/positions.nc'
 #dict_keys(['x', 'y', 'z', 'vx', 'vy', 'vz', 'transitTime', 'hitWall', 'surfaceHit', 'weight', 'charge', 'hasLeaked', 'distTraveled', 'time', 'dt'])
@@ -263,11 +263,23 @@ for i,surface in enumerate(Surfaces):
         particleSourceDict_Si[surface] = round(num_particles)
         nP_Si_global+=round(num_particles)            
 
+print("Si particles generated")  
+#%%  making particle sources
+
+import time
+
+start = time.time()
+
+
+
 makeParticleSource(particleSourceDict_C, "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/gitrGeom.cfg", "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_C.nc")
-if nP_Si_global>0:    
+if nP_Si_global>0:
+    
     makeParticleSource(particleSourceDict_Si, "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/gitrGeom.cfg", "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_Si.nc")
             
-          
+
+end = time.time()
+print(end - start)
 
 #%%  Estimating the total time evolution for the surface model
 
@@ -308,7 +320,7 @@ RHS_C = Gamma_C_net - Gamma_C_bulk
 RHS_Si = Gamma_Si_net - Gamma_Si_bulk
 RHS_SiC = Gamma_SiC_net - Gamma_SiC_bulk
 
-Stopping_criteria = 0.2 #changed from 0.1
+# Stopping_criteria = 0.2 #changed from 0.1
 
 RHS_C   = np.abs(RHS_C) 
 RHS_Si  = np.abs(RHS_Si)
@@ -324,7 +336,7 @@ Delta_t_surface = min(np.amin(Delta_t_surface_estimate_C),np.amin(Delta_t_surfac
 
 
 Time = Delta_t_surface
-Time_steps = 1e3
+Time_steps = 1e4
 Delta_Time = Delta_t_surface/Time_steps #Delta_t/Time_steps   This is the time step variable
 Delta_t_Stopping = 0
 #print("Till here")
@@ -458,7 +470,7 @@ Surface_time = SurfaceConcentrationData['time'][:]
 Surface_number = SurfaceConcentrationData['surface_number'][:]
 counter = len(Surface_time)
 
-surface_in_question = 190
+surface_in_question = 9
 
 plt.figure()
 plt.plot(Surface_time,Concentration[6][surface_in_question,:],marker='^',label='C_C')
