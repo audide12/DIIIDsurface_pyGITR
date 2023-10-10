@@ -25,12 +25,11 @@ g.Plot_Geom(["DiMES"])
 #g.Plot(["LeftStrip"])
 #g.Plot(["RightStrip"])
 
-
 # Zoom on the plot (the zoom function for 3D axis in matplotlib 3.3.3 is not working so it has to be done manually)
 # g.SetAxisLim(-1.25, 1.25)
 
 # Show Centroids
-# g.ShowCentroids()
+g.ShowCentroids_Annotated("DiMES")
 
 # Show normals for the DiMES
 # g.ShowNormals("DiMES")
@@ -68,7 +67,7 @@ g.SetElemAttr([],'potential',0)
 
 # Plot geometry showing values of Z with color
 #g.Plot(ElemAttr='Z', Alpha=0.1)
-
+#%%
 # Write the geometry file
 g.WriteGeomFile(Folder="/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input",OverWrite=True)
 

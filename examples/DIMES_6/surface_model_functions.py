@@ -61,7 +61,7 @@ def getGeom(File):
 
 def makeInitNC(dim,area,Conc):
 
-    N_GITR = 10000 # number of GITR particles
+    N_GITR = 1000000 # number of GITR particles
     initial_token_flux = Flux_C_Background[0]#1.0e19  # tunable parameter
 
     Flux_proportionality = {}
@@ -129,7 +129,7 @@ alpha_c = 0.0185   # Carbon concentration in the background plasma
 
 #Delta_implant_amorphous = 0.5 * Delta_implant_amorphous  # implantation layer may be shorter than that of SiC layer
 weight_gitr = Delta_t/Delta_t_gitr
-Stopping_criteria = 0.02 # for C_C and C_W
+Stopping_criteria = 0.7 # for C_C and C_W
 
 # Processing of background plasma 
 

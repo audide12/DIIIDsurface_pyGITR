@@ -23,16 +23,16 @@ import numpy as np
 
 #os.system("mv /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf_C.nc /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES/input/particleConf.nc")
 
-ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_3/input/particleConf_Si.nc'
-GeometryFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_3/input/gitrGeom.cfg'
+ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/particleConf_Si.nc'
+GeometryFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/gitrGeom.cfg'
 B0 = 2.25
-nP=10000
-dt=1e-9
-nT=5e4
+nP=1000000
+dt=1e-8
+nT=1e4
 
 
 
-def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom.cfg',folder='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_3/input/'):
+def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom.cfg',folder='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/'):
 
     B0 = 2.25
     thetaB = -2
@@ -45,13 +45,15 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.SetBField(B0=B0, theta = thetaB, phi = phiB)
     i.SetTimeStep(dt=dt,nT=nT)
     i.SetGeometryFile(GeometryFile)
-    i.SetParticleSource(ParticleFile, nP=nP, Zmax=14, M=28, Z=0)  # check with Zack
+    i.SetParticleSource(ParticleFile, nP=nP, Zmax=14, M=28, Z=1)  # check with Zack
     i.SetSurfaces()
     i.SetDiagnostics()
     i.SetBackgroundPlasmaProfiles()
     i.SetSurfaceModel()
     i.SetGeomHash()
     i.SetGeomSheath()
+    
+    i.Input['flags']['USE_CUDA'] = 1
 
     # Set the standard flags
     i.Input['flags']['BIASED_SURFACE'] = 0
@@ -70,7 +72,8 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['flags']['USE3DTETGEOM'] = 1  # causes errors for 3D simulations
     i.Input['flags']['SPECTROSCOPY'] = 2
 
-    i.Input['flags']['PARTICLE_TRACKS'] = 0   #PARTICLE_TRACKS turns on/off even producing a history.nc file
+    i.Input['flags']['PARTICLE_TRACKS'] = 1   #PARTICLE_TRACKS turns on/off even producing a history.nc file
+    i.Input['diagnostics']['trackSubSampleFactor'] = 5e2
 
     i.Input['flags']['USE_IONIZATION'] = 1
     i.Input['flags']['USE_RECOMBINATION'] = 1
@@ -108,7 +111,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['impurityParticleSource']['recombination']['fileString'] = 'ADAS_Rates_Si.nc'
 
 
-    i.Input['diagnostics']['trackSubSampleFactor'] = 5e4
+    # i.Input['diagnostics']['trackSubSampleFactor'] = 5e4
     # i.Input['diagnostics']['netx0'] = 1.38
     # i.Input['diagnostics']['netx1'] = 1.58
     # i.Input['diagnostics']['nX'] = 250

@@ -53,7 +53,7 @@ counter = len(Surface_time)
 
 #%% 
 
-total_runs = 12
+total_runs = 19 ## changed this
 
 time_index = 0
 Gamma_C_grosserosion  = np.zeros((len(Surfaces),total_runs))
@@ -63,7 +63,7 @@ Gamma_Si_neterosion   = np.zeros((len(Surfaces),total_runs))
 Time                  = np.zeros((1,total_runs))
 
 for l in range(total_runs):
-    number = l+1
+    number = l+2# changed this
     
     time_index = time_index + 1
     
@@ -178,9 +178,10 @@ for l in range(total_runs):
     Gamma_Si_grosserosion[:,time_index-1] = Gamma_Si_ero_global[:,0]
     
     Gamma_C_neterosion[:,time_index-1]    = (Gamma_C_ero_global - Gamma_C_redep)[:,0]
-    Gamma_Si_neterosion[:,time_index-1]   = (Gamma_Si_ero_global - Gamma_C_redep)[:,0]
+    Gamma_Si_neterosion[:,time_index-1]   = (Gamma_Si_ero_global - Gamma_Si_redep)[:,0]
     
     Time[0,time_index-1] = Surface_time[time_index]
+    print(Surface_time[time_index],"  seconds")
     
 #%%
 import matplotlib.pyplot as plt    
@@ -203,10 +204,10 @@ plt.show()
 #%%
 import matplotlib.pyplot as plt    
 
-surface_in_question = 40
+surface_in_question = 47
 plt.figure()
 
-plt.plot(Time[0,:],Gamma_Si_grosserosion[surface_in_question,:],marker='^',label='GITR + Surface model')
+plt.plot(Time[0,:],Gamma_Si_neterosion[surface_in_question,:],marker='^',label='GITR + Surface model')
 #plt.plot(Time_experiment_SiC_crystal-1.9, Si_grosserosion_experiment_SiC_crystal, label='DiMES Experiment - SiC crystalline')
 #plt.plot(Time_experiment1, Si_grosserosion_experiment1, label='DiMES Experiment - - SiC amorphous')
 

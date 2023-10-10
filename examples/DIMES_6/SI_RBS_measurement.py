@@ -50,19 +50,18 @@ counter = len(Surface_time)
 
 #%% 
 
-mesh_tracking = [43,41,42,30,17,33,29,47,46,45,44]
+mesh_tracking = [43,41,42,30,26,33,29,47,46,45,44]
 
 mesh_tracking_paper = [1,2,3,4,5,6,7,8,9,10,11,12,13]
 
-total_runs_absolute = 12
-total_runs = 2
+total_runs = 20
 
 time_index = 0
 Gamma_C_grosserosion  = np.zeros((len(Surfaces),total_runs))
 Gamma_C_neterosion    = np.zeros((len(Surfaces),total_runs))
 Gamma_Si_grosserosion = np.zeros((len(Surfaces),total_runs))
 Gamma_Si_neterosion   = np.zeros((len(Surfaces),total_runs))
-Time                  = np.zeros((1,total_runs_absolute))
+Time                  = np.zeros((1,total_runs))
 
 Gamma_C_grosserosion_absolute  = np.zeros((len(Surfaces),1))
 Gamma_C_neterosion_absolute    = np.zeros((len(Surfaces),1))
@@ -185,7 +184,7 @@ for l in range(total_runs):
     Gamma_Si_grosserosion[:,time_index-1] = Gamma_Si_ero_global[:,0]
     
     Gamma_C_neterosion[:,time_index-1]    = (Gamma_C_ero_global - Gamma_C_redep)[:,0]
-    Gamma_Si_neterosion[:,time_index-1]   = (Gamma_Si_ero_global - Gamma_C_redep)[:,0]
+    Gamma_Si_neterosion[:,time_index-1]   = (Gamma_Si_ero_global - Gamma_Si_redep)[:,0]
     
     Time[0,time_index-1] = Surface_time[time_index]
     
@@ -218,7 +217,7 @@ import matplotlib.pyplot as plt
 
 
 fig, ax = plt.subplots(1,1) 
-ax.bar(surface_index,(Gamma_Si_grosserosion_comparison/1e21).reshape(11), width = 0.4, color ='maroon')
+ax.bar(surface_index,(Gamma_Si_neterosion_comparison/1e21).reshape(11), width = 0.4, color ='maroon')
 
 # Set number of ticks for x-axis
 ax.set_xticks(surface_index)

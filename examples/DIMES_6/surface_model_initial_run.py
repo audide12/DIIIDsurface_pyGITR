@@ -337,7 +337,7 @@ import time
 start = time.time()
 
 Time = Delta_t_surface
-Time_steps = 1e4
+Time_steps = 1e3
 Delta_Time = Delta_t_surface/Time_steps #Delta_t/Time_steps   This is the time step variable
 Delta_t_Stopping = 0
 

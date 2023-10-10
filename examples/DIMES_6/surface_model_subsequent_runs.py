@@ -1,13 +1,13 @@
 #%% Subsequent surface runs
 
 runcell(0, '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/surface_model_functions.py')
-
+ 
 runcell('Reading geometry files', '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/surface_model_initial_run.py')
 
 runcell('Initiallize all surfaces with concentrations equal to the Z at that surface', '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/surface_model_initial_run.py')
 
 
-for run_no in [1,2,3,4,5,6,7,8,9,10,11,12,13]:
+for run_no in [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]:
     
     runcell('Reading position files of Carbon', '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/surface_model_subsequent_runs.py')
 
@@ -28,7 +28,7 @@ surface_in_question = 42
 
 #%%
 
-surface_in_question = 2
+surface_in_question = 45
 
 
 # print(1/np.polyfit(np.log(Surface_time), Concentration[20][surface_in_question,:], 1)    )
@@ -60,7 +60,7 @@ plt.legend()
 plt.title("Surface Element %d" % surface_in_question)
 plt.show()
 #%% Reading position files of Carbon
-run_no = 2
+
 
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/output_C_'+str(run_no)+'/positions.nc'
 #dict_keys(['x', 'y', 'z', 'vx', 'vy', 'vz', 'transitTime', 'hitWall', 'surfaceHit', 'weight', 'charge', 'hasLeaked', 'distTraveled', 'time', 'dt'])
@@ -311,9 +311,9 @@ for surface_index in range(len(Surfaces)):
     
     else:  #  erosion regime
         #print("erosion")
-        Gamma_C_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+        Gamma_C_bulk[surface_index] = 0.0#(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
         Gamma_Si_bulk[surface_index] = 0.0
-        Gamma_SiC_bulk[surface_index] = 0.0 # (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+        Gamma_SiC_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
     
 
 RHS_C = Gamma_C_net - Gamma_C_bulk
@@ -381,9 +381,9 @@ for t in range(1,int(Time_steps)):
         
         else:  #  erosion regime
             #print("erosion")
-            Gamma_C_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+            Gamma_C_bulk[surface_index] = 0.0#(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
             Gamma_Si_bulk[surface_index] = 0.0
-            Gamma_SiC_bulk[surface_index] = 0.0 #(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+            Gamma_SiC_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
                
     
     #print(t)
@@ -470,7 +470,7 @@ Surface_time = SurfaceConcentrationData['time'][:]
 Surface_number = SurfaceConcentrationData['surface_number'][:]
 counter = len(Surface_time)
 
-surface_in_question = 9
+surface_in_question = 41
 
 plt.figure()
 plt.plot(Surface_time,Concentration[6][surface_in_question,:],marker='^',label='C_C')

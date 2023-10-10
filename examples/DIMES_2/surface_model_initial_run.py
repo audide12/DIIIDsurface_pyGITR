@@ -23,8 +23,10 @@ import math
 #from pyGITR.process import *
 #from pyGITR.process_functions import *
 
-from pyGITR.Physical_Sputtering import *
-from pyGITR.make_particleSource import *
+#from pyGITR.Physical_Sputtering import *
+#from pyGITR.make_particleSource import *
+
+runcell(0, '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/surface_model_functions.py')
 
 
 #%%
@@ -306,7 +308,7 @@ RHS_C = Gamma_C_net - Gamma_C_bulk
 RHS_Si = Gamma_Si_net - Gamma_Si_bulk
 RHS_SiC = Gamma_SiC_net - Gamma_SiC_bulk
 
-Stopping_criteria = 0.1 # for C_C and C_W
+
 
 RHS_C   = np.abs(RHS_C) 
 RHS_Si  = np.abs(RHS_Si)

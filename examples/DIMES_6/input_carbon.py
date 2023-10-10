@@ -48,7 +48,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     i.SetBField(B0=B0, theta = thetaB, phi = phiB)
     i.SetTimeStep(dt=dt,nT=nT)
     i.SetGeometryFile(GeometryFile)
-    i.SetParticleSource(ParticleFile, nP=nP, Zmax=6, M=12, Z=0)
+    i.SetParticleSource(ParticleFile, nP=nP, Zmax=6, M=12, Z=1)
     i.SetSurfaces()
     i.SetDiagnostics()
     i.SetBackgroundPlasmaProfiles()

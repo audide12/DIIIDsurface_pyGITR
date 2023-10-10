@@ -4,7 +4,7 @@ import netCDF4
 from netCDF4 import Dataset
 import os
 
-
+#print(Sputtering_Rotation_H_C)
 
 def sign (p1_x, p1_y, p2_x, p2_y, p3_x,p3_y):
     return (p1_x - p3_x) * (p2_y - p3_y) - (p2_x - p3_x) * (p1_y - p3_y)
@@ -119,13 +119,13 @@ n_atom_C = 1.12e29 # in m^-3
 n_atom_Si = 5e28 # in m^-3
 n_atom_SiC_crystal = 4.8e28 # in m^-3
 
-Delta_t_gitr = 1e-9
+Delta_t_gitr = 1e-8
 
-Delta_implant_amorphous = 40e-9 # in metres
-alpha_c = 0.02
+Delta_implant_amorphous = 10e-9 # in metres
+alpha_c = 0.0185   # Carbon concentration in the background plasma
 
 weight_gitr = Delta_t/Delta_t_gitr
-Stopping_criteria = 0.1 # for C_C and C_W
+Stopping_criteria = 0.5 # for C_C and C_W
 
 # Processing of background plasma 
 
@@ -231,4 +231,4 @@ beta_depC2 = beta_depC2/Numbers
 # Sputtering_yield_H_to_Si = 0.01 # average value from the sputtering plots
 
 
-N_GITR = 10000 # number of GITR particles
+N_GITR = 1000000 # number of GITR particles

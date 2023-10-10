@@ -193,7 +193,7 @@ p.WriteParticleFile(ParticleFile)
 #%%
 import pyGITR
 ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/particleConf_C.nc'
-nP = 10000
+nP = 0#10000
 p = pyGITR.ParticleDistribution()
 p.SetAttr('Np', nP)
 
