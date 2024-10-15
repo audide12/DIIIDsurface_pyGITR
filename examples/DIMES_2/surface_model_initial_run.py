@@ -56,7 +56,7 @@ print(count_C,"have hit a mesh element (not necessarily a surface)")
 
 #%%
 
-# Reading position files of Tungsten
+# Reading position files of Silicon
 
 
 FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/output_Si_1/positions.nc'
@@ -79,10 +79,15 @@ print(count_Si,"have hit a mesh element (not necessarily a surface)")
 
 
 
+
 #%% Reading geometry files
 
 GeomFile = "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/gitrGeom.cfg"
 x1,x2,x3,y1,y2,y3,z1,z2,z3,area,surf,Atomic_no,a,b,c,d,in_direction,plane_norm = getGeom(GeomFile)
+#x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surf,indir,Atomic_no = loadCFG(geomFile=GeomFile)
+
+#GeomFile = "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/gitrGeom.cfg"
+#x1,x2,x3,y1,y2,y3,z1,z2,z3,area,surf,Atomic_no,a,b,c,d,in_direction,plane_norm = getGeom(GeomFile)
 #x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surf,indir,Atomic_no = loadCFG(geomFile=GeomFile)
 
 # Initialize the surface_evolution netcdf file
@@ -92,14 +97,26 @@ x1,x2,x3,y1,y2,y3,z1,z2,z3,area,surf,Atomic_no,a,b,c,d,in_direction,plane_norm =
 Zs = []
 
 Surfaces = []
+
+Surfaces_C = []
+Surfaces_SiC = []
+
 idx = np.arange(0,len(surf))
 for surface,z,i in zip(surf,Atomic_no,idx):
     if surface!=0:
         Zs.append(z)
         Surfaces.append(i)
+        if z==6:
+            Surfaces_C.append(i)
+        elif z==20:
+            Surfaces_SiC.append(i)    
+
 Zs = np.unique(Zs)
+            
 Zs = np.append(Zs,6)  # Adding Carbon
 Zs = np.append(Zs,14)  # Adding Silicon
+Zs = np.append(Zs,26)  # Adding enriched Carbon (C+SiC)
+Zs = np.append(Zs,34)  # Adding enriched Silicon (Si+SiC)
 
 print(Zs,"make up the", len(Surfaces),"surface mesh elements")
 # print(Surfaces)

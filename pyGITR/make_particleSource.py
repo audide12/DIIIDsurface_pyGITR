@@ -1,6 +1,6 @@
 """
 Generation of particles distribution for GITR.
-@author: zack bergstrom
+@author: aritra de
 
 To Do:
 points are close to surface, but not always within the surface
@@ -11,7 +11,7 @@ need to more velocity rotations into the surface loop
 from pyGITR.particleSource_functions import *
 import os
 
-def makeParticleSource(data,geomFile,particleFile):
+def makeParticleSource(Species,data,geomFile,particleFile):
     #x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surface,indir = loadCFG(geomFile=geomFile)
     
     with io.open(geomFile) as f:
@@ -39,7 +39,7 @@ def makeParticleSource(data,geomFile,particleFile):
     surface = np.array(config['geom']['surface'])
     indir = np.array(config['geom']['inDir'])
     
-    particleFile1 = '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_temp.nc'
+    particleFile1 = '/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/particleConf_temp.nc'
 
     # Generate positions per mesh element
     nP = 0
@@ -62,7 +62,7 @@ def makeParticleSource(data,geomFile,particleFile):
                     [y1[i],y2[i],y3[i],y1[i]], [z1[i],z2[i],z3[i],z1[i]]
             #zmin,zmax = min(zr), max(zr)
 
-            # plotPointsAndElement(surface_x,surface_y,surface_z,xr,yr,zr,a[i],b[i],c[i],indir[i])
+            #plotPointsAndElement(surface_x,surface_y,surface_z,xr,yr,zr,a[i],b[i],c[i],indir[i])
 
             for j in range(0,data[i]):
                 _a.append(a[i])
@@ -111,13 +111,23 @@ def makeParticleSource(data,geomFile,particleFile):
     # p.ScaleAttr(['vx','vz'],vperp)
     # p.ScaleAttr('vy',vpara)
     
+    if Species == 'C':    
+        Species_Mass = 12.011
+        Species_SBE = 7.41  # in eV
+    elif Species == 'Si':
+        Species_Mass = 28.0855
+        Species_SBE = 4.70
+    elif Species == 'W':
+        Species_Mass = 183.84
+        Species_SBE = 8.68
 
-    Es = p.Generate(nP, 'Thomson')
+    
+    Es = p.Generate(nP, 'Thomson',xb=Species_SBE)
     
     theta = p.Generate(nP,'SinCos')
     phi = p.Generate(nP, 'Uniform', x = np.linspace(0,2*np.pi,nP))
 
-    beta = 0.5*184*1.66e-27/1.602e-19
+    beta = 0.5*Species_Mass*1.66e-27/1.602e-19
     v = np.array(np.sqrt(Es/beta))
 
     vr = v * np.sin(theta) * np.cos(phi)
@@ -227,7 +237,7 @@ def makeParticleSource(data,geomFile,particleFile):
     # ncFile.close()
         
     
-    os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_6/input/particleConf_temp.nc")
+    os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/particleConf_temp.nc")
     
     rootgrp = netCDF4.Dataset(particleFile, "w", format="NETCDF4")
     npp = rootgrp.createDimension("nP", nP)

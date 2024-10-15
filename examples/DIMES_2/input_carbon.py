@@ -27,8 +27,8 @@ ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/part
 GeometryFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/gitrGeom.cfg'
 B0 = 2.25
 nP=1000000
-dt=1e-8
-nT=1e4
+dt=1e-9#1e-9
+nT=1e5#1e4
 
 
 
@@ -38,7 +38,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     thetaB = -2
     phiB = 0
     # B0 = -2.25
-    # thetaB = 2
+    # thetaB = 2 
     # phiB = 0
 
     # Initiallize input object
@@ -48,7 +48,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     i.SetBField(B0=B0, theta = thetaB, phi = phiB)
     i.SetTimeStep(dt=dt,nT=nT)
     i.SetGeometryFile(GeometryFile)
-    i.SetParticleSource(ParticleFile, nP=nP, Zmax=6, M=12, Z=1)
+    i.SetParticleSource(ParticleFile, nP=nP, Zmax=6, M=12, Z=0)
     i.SetSurfaces()
     i.SetDiagnostics()
     i.SetBackgroundPlasmaProfiles()
@@ -64,7 +64,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     i.Input['flags']['USE_SURFACE_POTENTIAL'] = 0
     i.Input['flags']['USETHERMALFORCE'] = 1
     i.Input['flags']['USEPERPDIFFUSION'] = 1
-    i.Input['flags']['USESURFACEMODEL'] = 1 ##  changed from 1
+    i.Input['flags']['USESURFACEMODEL'] = 0########1 ##  changed from 1
     i.Input['flags']['USESHEATHEFIELD'] = 1 # 1 or 0, on or off
     i.Input['flags']['USEPRESHEATHEFIELD'] = 1  # 1 or 0, on or off
     i.Input['flags']['USECOULOMBCOLLISIONS'] = 1
@@ -76,8 +76,11 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     i.Input['flags']['USE3DTETGEOM'] = 1  # causes errors  for 3D simulations
     i.Input['flags']['SPECTROSCOPY'] = 2
     
+    i.Input['flags']['USE_IONIZATION'] = 1   
+    i.Input['flags']['USE_RECOMBINATION'] = 1   
+    
     i.Input['flags']['PARTICLE_TRACKS'] = 1   #PARTICLE_TRACKS turns on/off even producing a history.nc file
-    i.Input['diagnostics']['trackSubSampleFactor'] = 5e2
+    i.Input['diagnostics']['trackSubSampleFactor'] = 100#50
     
     # Set the INTERP flags
     i.Input['flags']['BFIELD_INTERP'] = 2
@@ -96,8 +99,8 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
     i.Input['backgroundPlasmaProfiles']['Bfield']['zString'] = 'bz'
     i.Input['backgroundPlasmaProfiles']['Bfield']['yString'] = 'bt'
     i.Input['backgroundPlasmaProfiles']['Diffusion']['Dperp'] = 0.1
-    i.Input['surfaceModel']['fileString'] = 'surface_model_C-C.nc'
-    i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVr'] = 20000   # redundant
+    #i.Input['surfaceModel']['fileString'] = 'surface_model_C-C.nc'
+    #i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVr'] = 20000   # redundant
     
     i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVrString'] = 'vr'   # added
     i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVzString'] = 'vz'   # added
@@ -111,12 +114,12 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_C.nc',GeometryFile='gitrGeom.
 
 
 
-    i.Input['surfaces']['flux']['nE'] = 200
-    i.Input['surfaces']['flux']['E0'] = 0
-    i.Input['surfaces']['flux']['E'] = 200
-    i.Input['surfaces']['flux']['nA'] = 90
-    i.Input['surfaces']['flux']['A0'] = 0
-    i.Input['surfaces']['flux']['A'] = 90
+    # i.Input['surfaces']['flux']['nE'] = 200
+    # i.Input['surfaces']['flux']['E0'] = 0
+    # i.Input['surfaces']['flux']['E'] = 200
+    # i.Input['surfaces']['flux']['nA'] = 90
+    # i.Input['surfaces']['flux']['A0'] = 0
+    # i.Input['surfaces']['flux']['A'] = 90
 
     
     # i.Input['diagnostics']['netx0'] = 1.38
@@ -148,8 +151,13 @@ import netCDF4
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_4/output_C_1/history.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/output/history.nc'
+
+#FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/output_Si_2/positions.nc'
+#FileNameHistory='/Users/de/Research/Faulty GITR runs/DIMES_4/output_C_10/history.nc'
 HistoryData = Dataset(FileNameHistory, "r", format="NETCDF4")
+
+
 x = np.array(HistoryData.variables['x'])
 z = np.array(HistoryData.variables['z'])
 y = np.array(HistoryData.variables['y'])
@@ -159,17 +167,17 @@ nP = HistoryData.dimensions['nP'].size
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-for i in range(400,500):
+for i in range(0,10000):
     ax.plot(x[i,:],y[i,:],z[i,:])
 ax.set_zlabel('Z-Axis')
 ax.set_xlabel('X-Axis')
 ax.set_ylabel('Y-Axis')
     
-#g.Plot_Geom(["DiMES"],fig=fig, ax=ax)
-g.Plot_Geom(["DiMES","BoundBox"],fig=fig, ax=ax)
+g.Plot_Geom(["DiMES"],fig=fig, ax=ax)
+#g.Plot_Geom(["DiMES","BoundBox"],fig=fig, ax=ax)
 #g.Plot(ElemAttr='Z', Alpha=0.1, fig=fig, ax=ax)    
 
-#np.argwhere(np.isnan(Gamma_C_ero_global))
+
 
 #%%
 

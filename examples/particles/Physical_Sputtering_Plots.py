@@ -86,8 +86,8 @@ class Physical_Sputtering_Reflection_Plots():
 import matplotlib.pyplot as plt              
 plt.figure()
 
-Projectile = 'D'
-Target = 'Si'
+Projectile = 'C'
+Target = 'C'
        
 Energies = np.linspace(0.1,1e5,10000)
 Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target,Energies,0.0)
@@ -120,12 +120,12 @@ plt.figure()
 Angles:np.ndarray = np.linspace(0,90,num=100)
 Energy = 1000
 
-Projectile = 'H'
+Projectile = 'C'
 Target = 'C'
 
 Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields_angular(Projectile,Target,Energy,Angles)
 
-plt.plot(Angles,Sputtering.real,'ro')
+plt.loglog(Angles,Sputtering.real,'ro')
 
 
 plt.xlabel('Angle of Incidence(degrees)')
@@ -138,17 +138,22 @@ plt.title(r'$%s \rightarrow %s \quad (Energy = %.0f eV)$'%(Projectile,Target,Ene
 import matplotlib.pyplot as plt              
 plt.figure()
 
-Projectile = 'D'
-Target = 'W'
-Target2='C'
+Projectile2 = 'Si'
+Projectile = 'Si'
+
+
+Target2='SiC'
+Target='Si'
        
-Energies = np.linspace(0.1,1e5,10000)
+Energies = np.linspace(0.1,1000,10000)
 Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target,Energies)
-Sputtering2 = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target2,Energies)
+Sputtering2 = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile2,Target2,Energies)
+
 
 
 plt.loglog(Energies,Sputtering.real,'ro',label=r'$%s \rightarrow %s \quad $'%(Projectile,Target))
-plt.loglog(Energies,Sputtering2.real,'b',label=r'$%s \rightarrow %s \quad $'%(Projectile,Target2))
+plt.loglog(Energies,Sputtering2.real,'b',label=r'$%s \rightarrow %s \quad $'%(Projectile2,Target2))
+
 # plt.xlim(0.1,1e5)
 # plt.ylim(1e-5,2)
 
@@ -158,6 +163,29 @@ plt.ylabel('Sputering Yield (Y)')
 plt.legend()
 plt.show()
 
+
+#%% Sputtering yield plots
+
+import matplotlib.pyplot as plt              
+plt.figure()
+
+Projectile = 'C'
+Target = 'C'
+       
+Energies = np.linspace(0.1,1e5,10000)
+Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target,Energies)
+
+
+plt.loglog(Energies,Sputtering.real,'ro',label=r'$%s \rightarrow %s \quad $'%(Projectile,Target))
+
+# plt.xlim(0.1,1e5)
+# plt.ylim(1e-5,2)
+
+plt.xlabel('E_incident(eV)')
+plt.ylabel('Sputering Yield (Y)')
+#plt.title(r'$%s \rightarrow %s \quad $'%(Projectile,Target)+'(normal incidence)')
+plt.legend()
+plt.show()
 
 
 

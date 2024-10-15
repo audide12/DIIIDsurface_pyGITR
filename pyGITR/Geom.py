@@ -251,7 +251,7 @@ class GeomPlot(GeomGroup):
         
     def Plot_Geom(self, GroupID=None, ax=None, fig=None, **kwargs):
         if fig is None:
-            self.fig = plt.figure()
+            self.fig = plt.figure(dpi=200)
         if ax is None:
             self.ax = self.fig.add_subplot(111, projection='3d')
         else:
@@ -270,15 +270,14 @@ class GeomPlot(GeomGroup):
         self.ax.set_ylim3d(ymin,ymax)
         self.ax.set_zlim3d(zmin,zmax)              
     
-        self.ax.set_zlabel('Z-Axis')
-        self.ax.set_xlabel('X-Axis')
-        self.ax.set_ylabel('Y-Axis')
-        
+        self.ax.set_zlabel('Z-Axis (m)',fontsize=20)
+        self.ax.set_xlabel('Radial (m)',fontsize=20)
+        self.ax.set_ylabel('Toroidal (m)',fontsize=20)
+        self.ax.tick_params(axis='both', labelsize=15,length=10)
+        self.ax.xaxis.labelpad = 20
+        self.ax.yaxis.labelpad = 20
+        self.ax.zaxis.labelpad = 20
     
-        
-        
-        
-        
     
     def Plot_output(self, GroupID=None, ax=None, fig=None, **kwargs):
         if fig is None:

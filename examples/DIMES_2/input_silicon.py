@@ -27,8 +27,8 @@ ParticleFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/part
 GeometryFile='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/gitrGeom.cfg'
 B0 = 2.25
 nP=1000000
-dt=1e-8
-nT=1e4
+dt=1e-9#1e-9
+nT=1e5#1e4
 
 
 
@@ -45,7 +45,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.SetBField(B0=B0, theta = thetaB, phi = phiB)
     i.SetTimeStep(dt=dt,nT=nT)
     i.SetGeometryFile(GeometryFile)
-    i.SetParticleSource(ParticleFile, nP=nP, Zmax=14, M=28, Z=1)  # check with Zack
+    i.SetParticleSource(ParticleFile, nP=nP, Zmax=14, M=28, Z=0)  
     i.SetSurfaces()
     i.SetDiagnostics()
     i.SetBackgroundPlasmaProfiles()
@@ -73,7 +73,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['flags']['SPECTROSCOPY'] = 2
 
     i.Input['flags']['PARTICLE_TRACKS'] = 1   #PARTICLE_TRACKS turns on/off even producing a history.nc file
-    i.Input['diagnostics']['trackSubSampleFactor'] = 5e2
+    i.Input['diagnostics']['trackSubSampleFactor'] = 100#50
 
     i.Input['flags']['USE_IONIZATION'] = 1
     i.Input['flags']['USE_RECOMBINATION'] = 1
@@ -94,7 +94,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['backgroundPlasmaProfiles']['Bfield']['zString'] = 'bz'
     i.Input['backgroundPlasmaProfiles']['Bfield']['yString'] = 'bt'
     i.Input['backgroundPlasmaProfiles']['Diffusion']['Dperp'] = 0.1
-    i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVr'] = 20000   # redundant
+    #i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVr'] = 20000   # redundant
     
     # Set other options
     
@@ -135,7 +135,7 @@ from netCDF4 import Dataset
 import matplotlib.pyplot as plt
 import numpy as np
 
-FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_3/output_Si_2/history.nc'
+FileNameHistory='/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/output_Si_2/history.nc'
 HistoryData = Dataset(FileNameHistory, "r", format="NETCDF4")
 x = np.array(HistoryData.variables['x'])
 z = np.array(HistoryData.variables['z'])
@@ -146,8 +146,8 @@ nP = HistoryData.dimensions['nP'].size
 from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-for i in range(9000,9010):
-    ax.plot(x[i,:],y[i,:],z[i,:])
+for i in range(0,101):
+    ax.plot(x[i,:],y[i,:],z[i,:],marker='o', linestyle='dashed',linewidth=1, markersize=1)
 ax.set_zlabel('Z-Axis')
 ax.set_xlabel('X-Axis')
 ax.set_ylabel('Y-Axis')
@@ -156,7 +156,7 @@ ax.set_zlim([-1.25,-1.2])
 ax.set_ylim([-0.025,0.025])
 
 #g.Plot_Geom(["DiMES","BoundBox"],fig=fig, ax=ax)
-g.Plot_Geom(["DiMES"],fig=fig, ax=ax)
+#g.Plot_Geom(["DiMES"],fig=fig, ax=ax)
 g.Plot_Geom(ElemAttr='Z', Alpha=0.0, fig=fig, ax=ax)        
 #g.Plot(ElemAttr='Z', Alpha=0.1, fig=fig, ax=ax)    
 

@@ -17,7 +17,7 @@ class Sputtering_and_reflection():
             
             
     def ShowAvailableTargets(self):
-        for D in ['C', 'Si', 'W', 'SiC']:
+        for D in ['C', 'Si', 'W', 'SiC','SiC,Si,Crystalline','SiC,C,Crystalline','SiC,Si,Amorphous','SiC,C,Amorphous','SiC,Si-crystalline','SiC,C-crystalline']:
             print(D)
 
 
@@ -144,7 +144,81 @@ class Sputtering_and_reflection():
             cls.lambda_parameter = 2.2
             cls.q_parameter = 0.031
             cls.mu_parameter = 1.5
-            cls.Eth_parameter = 40 # in eV       
+            cls.Eth_parameter = 40 # in eV      
+            
+        elif Projectile == 'C' and Target =='SiC,Si,Crystalline':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 100.2
+            cls.q_parameter = 0.41
+            cls.mu_parameter = 2.1
+            cls.Eth_parameter = 40 # in eV
+            
+
+        elif Projectile == 'C' and Target =='SiC,C,Crystalline':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 100.2
+            cls.q_parameter = 0.85
+            cls.mu_parameter = 1.6
+            cls.Eth_parameter = 10 # in eV    
+             
+        elif Projectile == 'C' and Target =='SiC,Si,Amorphous':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 100.2
+            cls.q_parameter = 1.65
+            cls.mu_parameter = 2.6
+            cls.Eth_parameter = 16 # in eV  
+             
+        elif Projectile == 'C' and Target =='SiC,C,Amorphous':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 100.2
+            cls.q_parameter = 1.85
+            cls.mu_parameter = 2.2
+            cls.Eth_parameter = 10 # in eV
+             
+             
+        elif Projectile == 'D' and Target =='SiC,Si,Crystalline':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 100.2
+            cls.q_parameter = 0.013
+            cls.mu_parameter = 2
+            cls.Eth_parameter = 47 # in eV    
+             
+        elif Projectile == 'D' and Target =='SiC,C,Crystalline':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 160.2
+            cls.q_parameter = 0.0365
+            cls.mu_parameter = 2.4
+            cls.Eth_parameter = 20 # in eV    
+        
+        elif Projectile == 'D' and Target =='SiC,Si,Amorphous':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 220.2
+            cls.q_parameter = 0.09
+            cls.mu_parameter = 2.4
+            cls.Eth_parameter = 10 # in eV    
+            
+        elif Projectile == 'D' and Target =='SiC,C,Amorphous':  # for 45 incidence from SDTrimSP
+            cls.lambda_parameter = 200.2
+            cls.q_parameter = 0.11
+            cls.mu_parameter = 2
+            cls.Eth_parameter = 5 # in eV    
+            
+        elif Projectile == 'D' and Target =='SiC,Si-crystalline':  # for 45 incidence from SDTrimSP, averaged over three crystal orientations
+            cls.lambda_parameter = 30.2
+            cls.q_parameter = 0.0135
+            cls.mu_parameter = 2
+            cls.Eth_parameter = 80 # in eV      
+
+        elif Projectile == 'D' and Target =='SiC,C-crystalline':  # for 45 incidence from SDTrimSP, averaged over three crystal orientations
+            cls.lambda_parameter = 550
+            cls.q_parameter = 0.04
+            cls.mu_parameter = 2.8
+            cls.Eth_parameter = 14 # in eV
+            
+        elif Projectile == 'C' and Target =='SiC,Si-crystalline':  # for 45 incidence from SDTrimSP, averaged over three crystal orientations
+            cls.lambda_parameter = 80.2
+            cls.q_parameter = 0.39
+            cls.mu_parameter = 2.1
+            cls.Eth_parameter = 40 # in eV            
+            
+        elif Projectile == 'C' and Target =='SiC,C-crystalline':  # for 45 incidence from SDTrimSP, averaged over three crystal orientations
+            cls.lambda_parameter = 100.2
+            cls.q_parameter =  0.88
+            cls.mu_parameter = 1.8
+            cls.Eth_parameter = 10 # in eV        
             
         elif Projectile == 'Si' and Target =='W':
             print('Choose a different set of projectile and target, data not available for Si-> W')    
@@ -197,8 +271,28 @@ class Sputtering_and_reflection():
         elif Target == 'SiC':
             cls.Target_Mass = 40
             cls.Target_AtomicN = 20    
+        elif Target == 'SiC,Si,Crystalline':
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20
+        elif Target == 'SiC,C,Crystalline':
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20    
+        elif Target == 'SiC,Si,Amorphous':
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20    
+        elif Target == 'SiC,C,Amorphous':
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20    
+        elif Target == 'SiC,Si-crystalline':# averaged over three crystal orientations
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20   
+        elif Target == 'SiC,C-crystalline':# averaged over three crystal orientations
+            cls.Target_Mass = 40
+            cls.Target_AtomicN = 20      
+            
            
             
+         
             
             
     @classmethod        
@@ -219,14 +313,23 @@ class Sputtering_and_reflection():
             cls.a_3 = 0.7825e-4
             cls.a_4 = -1.109
         elif Projectile == 'Si' and Target =='Si':
-            cls.a_1 = -0.8631e1
-            cls.a_2 = 0.6888e-1
-            cls.a_3 = 0.1808e-1
-            cls.a_4 = -0.8577 
-        
+            cls.a_1 = -3.908
+            cls.a_2 = -0.1721
+            cls.a_3 = 1.974
+            cls.a_4 = -0.5695 
+        elif Projectile == 'D' and Target =='C':
+            cls.a_1 = 0.1526
+            cls.a_2 = -0.2304
+            cls.a_3 = 0.2113
+            cls.a_4 = 1.287
+        elif Projectile == 'D' and Target =='Si':
+            cls.a_1 = 0.2381
+            cls.a_2 = -0.1662
+            cls.a_3 = 0.1552
+            cls.a_4 = 1.535   
             
         else:
-            print('Choose a different set of projectile and target')    
+            print('Choose a different set of projectile and target reflection')    
             
     
             
@@ -274,7 +377,16 @@ class Sputtering_and_reflection():
             
         elif Projectile == 'C' and Target =='W':
             Sputtering_Dictionary = Sputtering_Rotation_C_W      
+        # CHANGE THESE    
+        elif Projectile == 'D' and Target =='SiC':    # verify these
+            Sputtering_Dictionary = Sputtering_Rotation_H_SiC      
+        
+        elif Projectile == 'C' and Target =='SiC':
+            Sputtering_Dictionary = Sputtering_Rotation_C_SiC     
             
+            
+        
+        
         else:
             flag = 1
                 
@@ -295,7 +407,7 @@ class Sputtering_and_reflection():
             
             factor = (cosine_factor)**(-f_interpolate(Incident_Energy)) * np.exp(b_interpolate(Incident_Energy)*(1-(1/cosine_factor) )) 
             
-            if factor>1000000:
+            if factor>10:
                 factor = 1
             elif np.isnan(factor):
                 factor = 1            
@@ -323,20 +435,104 @@ class Sputtering_and_reflection():
         epsilon = Incident_Energy*(self.Target_Mass/(self.Projectile_Mass + self.Target_Mass))* (Lindhard_length/(self.Projectile_AtomicN*self.Target_AtomicN)*electric_charge_square) 
         Nuclear_stopping = (0.5*np.log(1+1.2288*epsilon))/(epsilon + 0.1728*np.sqrt(epsilon) + 0.008*epsilon**0.1504) 
         
-        #Y = self.q_parameter*Nuclear_stopping*((Incident_Energy/self.Eth_parameter)-1)**self.mu_parameter/(self.lambda_parameter + ((Incident_Energy/self.Eth_parameter)-1)**self.mu_parameter)
+        Y = self.q_parameter*Nuclear_stopping*((Incident_Energy/self.Eth_parameter)-1)**self.mu_parameter/(self.lambda_parameter + ((Incident_Energy/self.Eth_parameter)-1)**self.mu_parameter)
         
         
         Numerator = ((Incident_Energy/self.Eth_parameter)-1)
         
         if Numerator < 0:
             Numerator = 0.0
-        
+
         Y = self.q_parameter*Nuclear_stopping*Numerator**self.mu_parameter/(self.lambda_parameter + Numerator**self.mu_parameter)
         
         if (Incident_Theta>0.0):
             Y = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, Target, Incident_Energy, Incident_Theta)*Y
+            
+        Rotation_database_factor = 1
+        Rotation_database = 45
+        
+        # if Projectile == 'C' and Target =='SiC,Si,Crystalline':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor
+        # elif Projectile == 'C' and Target =='SiC,Si,Amorphous':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor 
+        # elif Projectile == 'C' and Target =='SiC,C,Crystalline':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor
+        # elif Projectile == 'C' and Target =='SiC,C,Amorphous':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor
+            
+            
+        # elif Projectile == 'D' and Target =='SiC,Si,Crystalline':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor
+        # elif Projectile == 'D' and Target =='SiC,Si,Amorphous':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor 
+        # elif Projectile == 'D' and Target =='SiC,C,Crystalline':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor
+        # elif Projectile == 'D' and Target =='SiC,C,Amorphous':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor    
+        
+        # elif Projectile == 'D' and Target =='SiC,Si,Crystalline':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor
+        # elif Projectile == 'D' and Target =='SiC,Si,Amorphous':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor 
+        # elif Projectile == 'D' and Target =='SiC,C,Crystalline':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor
+        # elif Projectile == 'D' and Target =='SiC,C,Amorphous':  # for 45 incidence from SDTrimSP 
+        #     Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'SiC', Incident_Energy, Rotation_database)*Rotation_database_factor    
+            
+        if Projectile == 'D' and Target =='Si-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+            Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'Si', Incident_Energy, Rotation_database)*Rotation_database_factor           
+        elif Projectile == 'D' and Target =='C-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+            Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'C', Incident_Energy, Rotation_database)*Rotation_database_factor            
+        elif Projectile == 'C' and Target =='Si-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+            Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'Si', Incident_Energy, Rotation_database)*Rotation_database_factor                        
+        elif Projectile == 'C' and Target =='C-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+            Rotation_database_factor = Sputtering_and_reflection.Calculate_PhysicalSputtering_RotationFactor(Projectile, 'C', Incident_Energy, Rotation_database)*Rotation_database_factor
+            
+        
+        Y = Y/Rotation_database_factor
         
         return Y
+    
+    
+    def Calculate_ChemicalSputtering(self, Projectile, Target, Incident_Energy, Incident_Flux, Surface_Temperature): # ROTH Formula
+        
+        #print("WARNING: CHEMICAL SPUTTERING CURRENTLY ONLY FROM D->C")
+        Sputtering_and_reflection.Set_Mass_AtomicN(Projectile,Target)
+        
+        k_B = 1.38 * 10**(-23)   # in m^2 kg s^-2 K^-1  Boltzmann constant
+        
+        ETHC = 27.0   #Deuterium
+        ETFC = 447.0  #Deuterium    
+        QC   = 0.1    #Deuterium
+        ETHC_star = 1.0   #Deuterium
+        D = 125   #Deuterium
+        
+        
+        SNC = 0.5*np.log(1.+1.2288*Incident_Energy/ETFC)/(Incident_Energy/ETFC+ 0.1728*np.sqrt(Incident_Energy/ETFC)+ 0.008*pow(Incident_Energy/ETFC,0.1504))
+                                                          
+        if Incident_Energy>ETHC:
+            YPHYS = QC*SNC*(1-(ETHC/Incident_Energy)**(2./3.))*(1-ETHC/Incident_Energy)**2
+        else:
+            YPHYS = 0.0
+        
+        CSURF  = 1/(1+1E13*np.exp(-2.45*11604/Surface_Temperature)) #Surface_Temperature in K
+        CSP3   = CSURF*(2E-32*Incident_Flux+np.exp(-1.7*11604/Surface_Temperature))/(2E-32*Incident_Flux+(1+2E29/Incident_Flux*np.exp(-1.8*11604/Surface_Temperature))*np.exp(-1.7*11604/Surface_Temperature))
+        
+        YTHERM = CSP3*0.033*np.exp(-1.7*11604/Surface_Temperature)/(2E-32*Incident_Flux+np.exp(-1.7*11604/Surface_Temperature)) # Thermal Activated Process
+        
+        if Incident_Energy>ETHC_star:
+            YSURF = CSP3*QC*SNC*(1-(ETHC_star/Incident_Energy)**(2./3.))*(1-ETHC_star/Incident_Energy)**2/(1.0+np.exp((min(90.0,Incident_Energy)-90)/50))
+        else:
+            YSURF = 0
+            
+        return YSURF + YTHERM * (1 + D * YPHYS)    
+         
+    
+        
+        
+         
+        
+        
     
     def Calculate_ReflectionCoefficients(self, Projectile, Target, Incident_Energy):
         Sputtering_and_reflection.Set_ReflectionParameters(Projectile,Target)
@@ -401,7 +597,29 @@ class Physical_Sputtering_Reflection_Plots():
 #s.ShowAvailableTargets()
     
     
+# elif Projectile == 'D' and Target =='Si-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+#     cls.lambda_parameter = 400.2
+#     cls.q_parameter = 0.036
+#     cls.mu_parameter = 3
+#     cls.Eth_parameter = 24 # in eV    
     
+# elif Projectile == 'D' and Target =='C-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+#     cls.lambda_parameter = 10.2
+#     cls.q_parameter = 0.1
+#     cls.mu_parameter = 1
+#     cls.Eth_parameter = 30 # in eV    
+    
+# elif Projectile == 'C' and Target =='Si-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+#     cls.lambda_parameter = 10.2
+#     cls.q_parameter = 0.7
+#     cls.mu_parameter = 2
+#     cls.Eth_parameter = 40 # in eV    
+    
+# elif Projectile == 'C' and Target =='C-ENRICHEDSiC':  # for 45 incidence from SDTrimSP
+#     cls.lambda_parameter = 100.2
+#     cls.q_parameter = 1
+#     cls.mu_parameter = 1.4
+#     cls.Eth_parameter = 7 # in eV       
     
     
     

@@ -75,10 +75,14 @@ print(count_Si,"have hit a mesh element (not necessarily a surface)")
 
 
 
-#%%  Reading geometry files
+#%% Reading geometry files
 
 GeomFile = "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/gitrGeom.cfg"
 x1,x2,x3,y1,y2,y3,z1,z2,z3,area,surf,Atomic_no,a,b,c,d,in_direction,plane_norm = getGeom(GeomFile)
+#x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surf,indir,Atomic_no = loadCFG(geomFile=GeomFile)
+
+#GeomFile = "/Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/gitrGeom.cfg"
+#x1,x2,x3,y1,y2,y3,z1,z2,z3,area,surf,Atomic_no,a,b,c,d,in_direction,plane_norm = getGeom(GeomFile)
 #x1,x2,x3,y1,y2,y3,z1,z2,z3,a,b,c,d,area,plane_norm,surf,indir,Atomic_no = loadCFG(geomFile=GeomFile)
 
 # Initialize the surface_evolution netcdf file
@@ -88,13 +92,26 @@ x1,x2,x3,y1,y2,y3,z1,z2,z3,area,surf,Atomic_no,a,b,c,d,in_direction,plane_norm =
 Zs = []
 
 Surfaces = []
+
+Surfaces_C = []
+Surfaces_SiC = []
+
 idx = np.arange(0,len(surf))
 for surface,z,i in zip(surf,Atomic_no,idx):
     if surface!=0:
         Zs.append(z)
         Surfaces.append(i)
+        if z==6:
+            Surfaces_C.append(i)
+        elif z==20:
+            Surfaces_SiC.append(i)    
+
 Zs = np.unique(Zs)
+            
+#Zs = np.append(Zs,6)  # Adding Carbon
 Zs = np.append(Zs,14)  # Adding Silicon
+Zs = np.append(Zs,26)  # Adding enriched Carbon (C+SiC)
+Zs = np.append(Zs,34)  # Adding enriched Silicon (Si+SiC)
 
 print(Zs,"make up the", len(Surfaces),"surface mesh elements")
 # print(Surfaces)
@@ -114,7 +131,7 @@ for z in Zs:
 
 # Create initial ncFile
 
-#os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_2/input/surface_evolution_C_Si.nc")
+#os.system("rm /Users/de/Research/DIIIDsurface_pyGITR/examples/DIMES_7/input/surface_evolution_C_Si.nc")
 
 makeInitNC(len(Surfaces),area,Concentration)
 
@@ -298,10 +315,15 @@ for surface_index in range(len(Surfaces)):
         Gamma_SiC_bulk[surface_index] = last_entry_SiC[surface_index,0]*(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
     
     else:  #  erosion regime
-        print("erosion")
-        Gamma_C_bulk[surface_index] = 0.0 # (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
-        Gamma_Si_bulk[surface_index] = 0.0
-        Gamma_SiC_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+        #print("erosion")
+        if surface_index in Surfaces_SiC:                
+            Gamma_C_bulk[surface_index] = 0.0#(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+            Gamma_Si_bulk[surface_index] = 0.0
+            Gamma_SiC_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+        elif surface_index in Surfaces_C:
+            Gamma_C_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+            Gamma_Si_bulk[surface_index] = 0.0
+            Gamma_SiC_bulk[surface_index] = 0.0 #(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
     
 
 RHS_C = Gamma_C_net - Gamma_C_bulk
@@ -380,9 +402,14 @@ for t in range(1,int(Time_steps)):
         
         else:  #  erosion regime
             #print("erosion")
-            Gamma_C_bulk[surface_index] = 0.0 # (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
-            Gamma_Si_bulk[surface_index] = 0.0
-            Gamma_SiC_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+            if surface_index in Surfaces_SiC:                
+                Gamma_C_bulk[surface_index] = 0.0#(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+                Gamma_Si_bulk[surface_index] = 0.0
+                Gamma_SiC_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+            elif surface_index in Surfaces_C:
+                Gamma_C_bulk[surface_index] = (Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
+                Gamma_Si_bulk[surface_index] = 0.0
+                Gamma_SiC_bulk[surface_index] = 0.0 #(Gamma_C_net[surface_index]+Gamma_Si_net[surface_index]+Gamma_SiC_net[surface_index])
                
     
     #print(t)

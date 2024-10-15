@@ -89,7 +89,7 @@ plt.figure()
 Projectile = 'H'
 Target = 'Si'
        
-Energies = np.linspace(0.1,1e5,10000)
+Energies = np.linspace(0.1,1e3,10000)
 Sputtering = Physical_Sputtering_Reflection_Plots.Sputtering_yields(Projectile,Target,Energies)
 
 plt.loglog(Energies,Sputtering.real,'ro')

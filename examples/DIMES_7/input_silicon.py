@@ -45,7 +45,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.SetBField(B0=B0, theta = thetaB, phi = phiB)
     i.SetTimeStep(dt=dt,nT=nT)
     i.SetGeometryFile(GeometryFile)
-    i.SetParticleSource(ParticleFile, nP=nP, Zmax=14, M=28, Z=0)  # check with Zack
+    i.SetParticleSource(ParticleFile, nP=nP, Zmax=14, M=28, Z=0)
     i.SetSurfaces()
     i.SetDiagnostics()
     i.SetBackgroundPlasmaProfiles()
@@ -54,7 +54,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.SetGeomSheath()
     
     i.Input['flags']['USE_CUDA'] = 1
-    
+
     # Set the standard flags
     i.Input['flags']['BIASED_SURFACE'] = 0
     i.Input['flags']['USE_SURFACE_POTENTIAL'] = 0
@@ -71,11 +71,9 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['flags']['USECYLSYMM'] = 1 # rotates the plasma with cylindrical geometry
     i.Input['flags']['USE3DTETGEOM'] = 1  # causes errors for 3D simulations
     i.Input['flags']['SPECTROSCOPY'] = 2
-    
-    i.Input['flags']['PARTICLE_TRACKS'] = 1   #PARTICLE_TRACKS turns on/off even producing a history.nc file
-    i.Input['diagnostics']['trackSubSampleFactor'] = 5e2
 
-    
+    i.Input['flags']['PARTICLE_TRACKS'] = 1   #PARTICLE_TRACKS turns on/off even producing a history.nc file
+    i.Input['diagnostics']['trackSubSampleFactor'] = 1000
 
     i.Input['flags']['USE_IONIZATION'] = 1
     i.Input['flags']['USE_RECOMBINATION'] = 1
@@ -96,7 +94,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['backgroundPlasmaProfiles']['Bfield']['zString'] = 'bz'
     i.Input['backgroundPlasmaProfiles']['Bfield']['yString'] = 'bt'
     i.Input['backgroundPlasmaProfiles']['Diffusion']['Dperp'] = 0.1
-    i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVr'] = 20000   # redundant
+    #i.Input['backgroundPlasmaProfiles']['FlowVelocity']['flowVr'] = 20000   # redundant
     
     # Set other options
     
@@ -113,7 +111,7 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
     i.Input['impurityParticleSource']['recombination']['fileString'] = 'ADAS_Rates_Si.nc'
 
 
-    # i.Input['diagnostics']['trackSubSampleFactor'] = 10
+    # i.Input['diagnostics']['trackSubSampleFactor'] = 5e4
     # i.Input['diagnostics']['netx0'] = 1.38
     # i.Input['diagnostics']['netx1'] = 1.58
     # i.Input['diagnostics']['nX'] = 250
@@ -131,7 +129,6 @@ def make_input(nP,dt,nT,ParticleFile='particleConf_Si.nc',GeometryFile='gitrGeom
 if __name__ == '__main__':
     make_input(nP,dt,nT)
 #%%
-
 import netCDF4
 from netCDF4 import Dataset
 import matplotlib.pyplot as plt

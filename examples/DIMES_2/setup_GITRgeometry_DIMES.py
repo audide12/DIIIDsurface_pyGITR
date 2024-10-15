@@ -20,6 +20,8 @@ g.ShowGroups()
 
 # Plot mesh for some groups
 g.Plot_Geom(["DiMES"])
+#g.Plot(["DiMES"])
+
 #g.Plot(["BoundBox"])
 #g.Plot_Geom(["LargeRectangle"])
 #g.Plot(["LeftStrip"])
@@ -30,7 +32,7 @@ g.Plot_Geom(["DiMES"])
 # g.SetAxisLim(-1.25, 1.25)
 
 # Show Centroids
-# g.ShowCentroids()
+#g.ShowCentroids_Annotated("DiMES")
 
 # Show normals for the DiMES
 # g.ShowNormals("DiMES")
@@ -68,7 +70,7 @@ g.SetElemAttr([],'potential',0)
 
 # Plot geometry showing values of Z with color
 #g.Plot(ElemAttr='Z', Alpha=0.1)
-
+#%%
 # Write the geometry file
 g.WriteGeomFile(Folder="input",OverWrite=True)
 

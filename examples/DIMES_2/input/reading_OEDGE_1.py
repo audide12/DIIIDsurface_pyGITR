@@ -25,6 +25,10 @@ B_R = np.array(df['B_R'])
 B_Z = np.array(df['B_Z'])
 B_T = np.array(df['B_T'])
 
+
+B_R = B_R*B_tot
+B_Z = B_Z*B_tot
+B_T = B_T*B_tot
 # Converting 1D arrays to 2D arrays
 nR = 251
 nZ = 251
@@ -238,3 +242,55 @@ plt.xlabel('R (m)')
 plt.ylabel('T(eV')
 plt.title('T vs R')
 
+plt.figure()
+plt.plot(R_1D,Ne_2D[z_reference,:],label='Ne')
+#plt.plot(R_1D,Ni_2D[z_reference,:],label='Ni')
+plt.legend()
+plt.xlabel('R (m)')
+plt.ylabel(r'$Ne(m^{-3})$')
+plt.title('Ne vs R')
+
+
+#%% Plotting Background
+r_reference = 100
+z_reference = 0 
+
+plt.figure()
+plt.plot(R_1D,Te_2D[z_reference,:],label=r'$T_e$ (eV)',linewidth=5,color='black')
+plt.plot(R_1D,Ne_2D[z_reference,:]/1e18,label=r'$n_{e} \times 10^{18} (m^{-3})$',linewidth=5,color='blue')
+#plt.plot(R_1D,Ti_2D[z_reference,:],label='Ti',linewidth=5)
+plt.legend()
+plt.xlabel('R (m)',fontsize=20)
+#plt.ylabel('T(eV)')
+plt.yticks(fontsize=20)
+
+plt.xticks([1.42,1.45,1.46,1.474,1.5,1.51,1.6])
+plt.xticks(fontsize=20)
+plt.axvline(x=1.474,linewidth=5)
+plt.legend(fontsize=20,loc='upper right')
+
+#plt.title('T vs R')
+plt.xlim(1.42, 1.6) 
+plt.show()
+
+plt.figure()       
+plt.plot(R_1D,B_tot_2D[z_reference,:],label='Total B')
+plt.plot(R_1D,B_R_2D[z_reference,:],label='Br')
+plt.plot(R_1D,B_Z_2D[z_reference,:],label='Bz')
+plt.plot(R_1D,B_T_2D[z_reference,:],label='Bt')
+plt.legend()
+plt.xlabel('R (m)')
+plt.ylabel('B (T)')
+plt.title('B vs R')
+#%% 
+r_reference = 100
+z_reference = 0 
+
+plt.figure()       
+plt.plot(R_1D,(Te_2D[z_reference,:])**2/(Ne_2D[z_reference,:]/1e18),linewidth=5,color='black')
+#plt.plot(R_1D,Ne_2D[z_reference,:]/1e18,label=r'$n_{e} \times 10^{18} (m^{-3})$',linewidth=5,color='blue')
+plt.axvline(x=1.474,linewidth=5)
+plt.legend()
+plt.xlabel('R (m)')
+plt.ylabel('T^2/Ne')
+plt.title('Hypothesis')

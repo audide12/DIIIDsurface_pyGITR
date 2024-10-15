@@ -22,6 +22,22 @@ def PointInTriangle (pt_x, pt_y, v1_x, v1_y, v2_x, v2_y, v3_x, v3_y):
     return not(has_neg and has_pos)
 
 
+def PointInTriangle_1(pt_x, pt_y, v1_x, v1_y, v2_x, v2_y, v3_x, v3_y):
+
+    if (pt_y == v1_y) and (pt_y == v2_y) and (pt_y == v3_y):
+        maximum_x = max(v1_x,v2_x,v3_x)
+        minimum_x = min(v1_x,v2_x,v3_x)
+        
+        if((maximum_x - pt_x)*(pt_x-minimum_x))>0:
+            return True
+        else:
+            return False
+        
+    else:
+        return False
+        
+
+
 def initDict(species,myDict):
     for specie in species:
         myDict[specie] = []
@@ -111,25 +127,33 @@ def makeInitNC(dim,area,Conc):
 #Flux_C = alpha_c*Flux_H
 
 Delta_t = 0.1 # in seconds 
-Delta_t_gitr = 1e-8
+
 Delta_implant = 250e-6 # enter parameter value and units
 amu_C = 12 #for carbon
 amu_W = 184 #for tungsten
 k_B = 1.38 * 10**(-23)   # in m^2 kg s^-2 K^-1  Boltzmann constant
 M_H = 1.67*10**(-27)  # in kg
+M_D = 2*1.67*10**(-27)  # in kg
 M_C = 12*M_H  
 amu_Si = 28 #for silicon
-n_atom = 6e22 # average number density in cm^-3
+n_atom = 1e29 # average number density in m^-3
 n_atom_C = 1.12e29 # in m^-3
 n_atom_Si = 5e28 # in m^-3
 n_atom_SiC_crystal = 4.8e28 # in m^-3
 
-Delta_implant_amorphous = 10e-9 # in metres
-alpha_c = 0.0185   # Carbon concentration in the background plasma
+Delta_t_gitr = 1e-8
+nT=1e4  # from input.py
+Delta_t_gitr = 1e-8*nT
+
+#Delta_implant_amorphous = 30e-9#######  10e-9 # in metres
+alpha_c = 0.02#0.016 0.01  0.0185   # Carbon concentration in the background plasma
+Surface_Temperature = 200
+
+weight_gitr = Delta_t/Delta_t_gitr
+#Stopping_criteria = 0.2 # for C_C and C_W
 
 #Delta_implant_amorphous = 0.5 * Delta_implant_amorphous  # implantation layer may be shorter than that of SiC layer
-weight_gitr = Delta_t/Delta_t_gitr
-Stopping_criteria = 0.7 # for C_C and C_W
+#Stopping_criteria = 0.2 # for C_C and C_W
 
 # Processing of background plasma 
 
@@ -157,14 +181,25 @@ for surface,z,i in zip(surf,Atomic_no,idx):
 Zs = np.unique(Zs)
 
 
+
 Flux_H_Background = np.zeros((len(Surfaces),1))
 Flux_C_Background = np.zeros((len(Surfaces),1))
-YHtoSiC_Flux_H_in = np.zeros((len(Surfaces),1))
-YCtoSiC_Flux_C_in = np.zeros((len(Surfaces),1))
-YHtoSi_Flux_H_in  = np.zeros((len(Surfaces),1))
-YHtoC_Flux_H_in   = np.zeros((len(Surfaces),1))
-YCtoSi_Flux_C_in  = np.zeros((len(Surfaces),1))
-YCtoC_Flux_C_in   = np.zeros((len(Surfaces),1))
+
+YHtoSiC_Si_Flux_H_in = np.zeros((len(Surfaces),1))
+YHtoSiC_C_Flux_H_in  = np.zeros((len(Surfaces),1))
+YCtoSiC_Si_Flux_C_in = np.zeros((len(Surfaces),1))
+YCtoSiC_C_Flux_C_in  = np.zeros((len(Surfaces),1))
+YHtoSi_Flux_H_in     = np.zeros((len(Surfaces),1))
+YHtoC_Flux_H_in      = np.zeros((len(Surfaces),1))
+YCtoSi_Flux_C_in     = np.zeros((len(Surfaces),1))
+YCtoC_Flux_C_in      = np.zeros((len(Surfaces),1))
+
+XDtoCchem_Flux_D_in    = np.zeros((len(Surfaces),1)) # chemical sputtering
+
+YDtoSien_Flux_D_in     = np.zeros((len(Surfaces),1))
+YDtoCen_Flux_D_in      = np.zeros((len(Surfaces),1))
+YCtoSien_Flux_C_in     = np.zeros((len(Surfaces),1))
+YCtoCen_Flux_C_in      = np.zeros((len(Surfaces),1))
 
 beta_depC1 = np.zeros((len(Surfaces),1))
 beta_depC2 = np.zeros((len(Surfaces),1))
@@ -172,6 +207,7 @@ beta_depC2 = np.zeros((len(Surfaces),1))
 Numbers = np.zeros((len(Surfaces),1))
 sr_object = Sputtering_and_reflection()
 
+background_angle = 60 #60, 45 -not possible
 
 for j in Surfaces:
     for idr,r in enumerate(R): 
@@ -179,14 +215,14 @@ for j in Surfaces:
             
             # print(z2[j])
         
-            if(PointInTriangle (R[idr], Z[idz], x1[j], z1[j], x2[j], z2[j], x3[j], z3[j])):
+            if(PointInTriangle_1(R[idr], Z[idz], x1[j], z1[j], x2[j], z2[j], x3[j], z3[j])):
             
                 #print("done")
                 Energy_ion_H = 2*T_i[idz,idr]+3*1*T_e[idz,idr]
-                Energy_ion_C = 2*T_i[idz,idr]+3*6*T_e[idz,idr]  # check this
+                Energy_ion_C = 2*T_i[idz,idr]+3*2.5*T_e[idz,idr]  # check this - change the average charge state
             
-                
-                Gamma_H = 0.61 * ni[idz,idr] * np.sqrt(k_B*T_e[idz,idr]*11600/M_H) * np.sin(1.5*np.pi/180) # ni(m^-3),Te(eV),1.5 degrees DiMES angle, 1eV =  11600 K, in m^-2 s^-1
+                Gamma_H = 0.61 * ni[idz,idr] * np.sqrt(k_B*(T_e[idz,idr]+T_i[idz,idr])*11600/M_D) * np.sin(1.5*np.pi/180) # ni(m^-3),Te(eV),1.5 degrees DiMES angle, 1eV =  11600 K, in m^-2 s^-1
+                #Gamma_H = 2.5e22
                 Gamma_C = alpha_c * Gamma_H  # in m^-2 s^-1
             
                 #print(Gamma_H)
@@ -194,31 +230,61 @@ for j in Surfaces:
                 Flux_H_Background[j,0] = Flux_H_Background[j,0] + Gamma_H
                 Flux_C_Background[j,0] = Flux_C_Background[j,0] + Gamma_C
                 
+                Target_1 = 'SiC,C,Amorphous'                
+                Target_2 = 'SiC,Si,Amorphous'
+                
+                #Target_Si = 'Si-ENRICHEDSiC'
+                Target_Si = 'Si'
+                
                 sr_object = Sputtering_and_reflection()
-                YHtoSiC_Flux_H_in[j,0] = YHtoSiC_Flux_H_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('H','SiC',Energy_ion_H,60)*Gamma_H
-                YCtoSiC_Flux_C_in[j,0] = YCtoSiC_Flux_C_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('C','SiC',Energy_ion_C,60)*Gamma_C
-                YHtoSi_Flux_H_in[j,0]  = YHtoSi_Flux_H_in[j,0]  + sr_object.Calculate_PhysicalSputteringParameters('H','Si',Energy_ion_H,60)*Gamma_H
-                YHtoC_Flux_H_in[j,0]   = YHtoC_Flux_H_in[j,0]   + sr_object.Calculate_PhysicalSputteringParameters('H','C',Energy_ion_H,60)*Gamma_H
-                YCtoSi_Flux_C_in[j,0]  = YCtoSi_Flux_C_in[j,0]  + sr_object.Calculate_PhysicalSputteringParameters('C','Si',Energy_ion_C,60)*Gamma_C
-                YCtoC_Flux_C_in[j,0]   = YCtoC_Flux_C_in[j,0]   + sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_ion_C,60)*Gamma_C
+                
+                YHtoSiC_Si_Flux_H_in[j,0] = YHtoSiC_Si_Flux_H_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('D',Target_2,Energy_ion_H,background_angle)*Gamma_H
+                YHtoSiC_C_Flux_H_in[j,0] = YHtoSiC_C_Flux_H_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('D',Target_1,Energy_ion_H,background_angle)*Gamma_H                
+                
+                YCtoSiC_Si_Flux_C_in[j,0] = YCtoSiC_Si_Flux_C_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('C',Target_2,Energy_ion_C,background_angle)*Gamma_C
+                YCtoSiC_C_Flux_C_in[j,0] = YCtoSiC_C_Flux_C_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('C',Target_1,Energy_ion_C,background_angle)*Gamma_C
+                
+                
+                YHtoSi_Flux_H_in[j,0]  = YHtoSi_Flux_H_in[j,0]  + sr_object.Calculate_PhysicalSputteringParameters('D','Si',Energy_ion_H,background_angle)*Gamma_H                                
+                YHtoC_Flux_H_in[j,0]   = YHtoC_Flux_H_in[j,0]   + sr_object.Calculate_PhysicalSputteringParameters('D','C',Energy_ion_H,background_angle)*Gamma_H
+                YCtoSi_Flux_C_in[j,0]  = YCtoSi_Flux_C_in[j,0]  + sr_object.Calculate_PhysicalSputteringParameters('C','Si',Energy_ion_C,background_angle)*Gamma_C
+                YCtoC_Flux_C_in[j,0]   = YCtoC_Flux_C_in[j,0]   + sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_ion_C,background_angle)*Gamma_C
                 
                 sr_object = Sputtering_and_reflection()
                 beta_depC1[j,0] = beta_depC1[j,0] + (1-sr_object.Calculate_ReflectionCoefficients('C','C',Energy_ion_C))*Gamma_C
-                beta_depC2[j,0] = beta_depC2[j,0] + (1-sr_object.Calculate_ReflectionCoefficients('C','C',Energy_ion_C))*Gamma_C
+                beta_depC2[j,0] = beta_depC2[j,0] + (1-sr_object.Calculate_ReflectionCoefficients('C','C',Energy_ion_C))*Gamma_C                
+                
+                YDtoSien_Flux_D_in[j,0]     = YDtoSien_Flux_D_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('D',Target_Si,Energy_ion_H,background_angle)*Gamma_H      
+                YDtoCen_Flux_D_in[j,0]      = YDtoCen_Flux_D_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('D','C',Energy_ion_H,background_angle)*Gamma_H      
+                YCtoSien_Flux_C_in[j,0]     = YCtoSien_Flux_C_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('C',Target_Si,Energy_ion_C,background_angle)*Gamma_C  
+                YCtoCen_Flux_C_in[j,0]      = YCtoCen_Flux_C_in[j,0] + sr_object.Calculate_PhysicalSputteringParameters('C','C',Energy_ion_C,background_angle)*Gamma_C      
+                                
+                XDtoCchem_Flux_D_in[j,0]    = XDtoCchem_Flux_D_in[j,0] + sr_object.Calculate_ChemicalSputtering('D', 'C', Energy_ion_H, Gamma_H, Surface_Temperature)*Gamma_H                
                 
                 Numbers[j,0] = Numbers[j,0] + 1
                 
                 
 Flux_H_Background = Flux_H_Background/Numbers
 Flux_C_Background = Flux_C_Background/Numbers
-YHtoSiC_Flux_H_in = YHtoSiC_Flux_H_in/Numbers
-YCtoSiC_Flux_C_in = YCtoSiC_Flux_C_in/Numbers
+
+YHtoSiC_Si_Flux_H_in = YHtoSiC_Si_Flux_H_in/Numbers
+YHtoSiC_C_Flux_H_in = YHtoSiC_C_Flux_H_in/Numbers
+
+YCtoSiC_Si_Flux_C_in = YCtoSiC_Si_Flux_C_in/Numbers
+YCtoSiC_C_Flux_C_in = YCtoSiC_C_Flux_C_in/Numbers
+
 YHtoSi_Flux_H_in  = YHtoSi_Flux_H_in/Numbers
 YHtoC_Flux_H_in   = YHtoC_Flux_H_in/Numbers
 YCtoSi_Flux_C_in  = YCtoSi_Flux_C_in/Numbers
 YCtoC_Flux_C_in   = YCtoC_Flux_C_in/Numbers
 beta_depC1 = beta_depC1/Numbers
 beta_depC2 = beta_depC2/Numbers
+XDtoCchem_Flux_D_in = XDtoCchem_Flux_D_in/Numbers
+
+YDtoSien_Flux_D_in     = YDtoSien_Flux_D_in/Numbers
+YDtoCen_Flux_D_in      = YDtoCen_Flux_D_in/Numbers 
+YCtoSien_Flux_C_in     = YCtoSien_Flux_C_in/Numbers 
+YCtoCen_Flux_C_in      = YCtoCen_Flux_C_in/Numbers 
 
 # Sputtering_yield_H_to_C = 0.005  # max 0.005
 # Sputtering_yield_C_to_C = 0.22   # 0.22 treated almost constant
@@ -236,3 +302,5 @@ beta_depC2 = beta_depC2/Numbers
 
 
 N_GITR = 1000000 # number of GITR particles
+
+
